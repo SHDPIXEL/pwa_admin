@@ -3,7 +3,7 @@ import Table from "../../components/Table";
 import { SquarePen, Trash2, RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import dumuProduct from "/home/nandan/Nandan/shdpixel/Breboot/Breboot-admin/src/assets/images/dumy_1.jpg"
+import dumuProduct from "../../assets/images/dumy_1.jpg"
 
 
 const ListProduct = () => {
