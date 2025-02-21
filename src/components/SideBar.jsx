@@ -11,7 +11,7 @@ import {
   Menu,
   X,
   Swords,
-  Sword,
+  Calendar,
   ShoppingCart,
   ChartBarStacked,
   TicketCheck
@@ -31,21 +31,21 @@ const Sidebar = ({ setIsAuthenticated }) => {
   const menuStructure = [
     { path: '/dashboard', name: 'Dashboard', icon: Home, type: 'link' },
     {
+      name: 'Weeks',
+      icon: Calendar,
+      type: 'submenu',
+      submenuItems: [
+        { path: '/week/list', name: 'Week List', icon: Rows3 },
+        { path: '/week/add', name: 'Week Add', icon: Plus },
+      ],
+    },
+    {
       name: 'Challenges',
       icon: Swords,
       type: 'submenu',
       submenuItems: [
         { path: '/challenges/list', name: 'Challenges List', icon: Rows3 },
-        { path: '/challenges/add', name: 'Challenges Add', icon: Plus },
-      ],
-    },
-    {
-      name: 'Sub Challenges',
-      icon: Sword,
-      type: 'submenu',
-      submenuItems: [
-        { path: '/subchallenges/list', name: 'Subchallenges List', icon: Rows3 },
-        { path: '/subchallenges/add', name: 'Add Subchallenges', icon: Plus },
+        { path: '/challenges/add', name: 'Add Challenges', icon: Plus },
       ],
     },
     {
