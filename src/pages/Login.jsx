@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Lock, Mail, EyeClosed, EyeIcon } from 'lucide-react';
 import { useNavigate } from 'react-router';
-// import API from '../lib/utils';
+import API from '../lib/utils';
 import { Helmet } from 'react-helmet-async';
 
 const TOKEN_EXPIRY_DURATION = 60 * 60 * 1000;
@@ -14,52 +14,52 @@ const Login = ({ setIsAuthenticated }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('authToken');
-  //   const tokenExpiry = localStorage.getItem('tokenExpiry');
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const tokenExpiry = localStorage.getItem('tokenExpiry');
 
-  // //   if (token && tokenExpiry) {
-  //     const isExpired = Date.now() > parseInt(tokenExpiry, 10);
-  //     if (isExpired) {
-  //       localStorage.removeItem('authToken');
-  //       localStorage.removeItem('tokenExpiry');
-  //       setIsAuthenticated(false);
-  //     } else {
-  //       setIsAuthenticated(true);
-  //       navigate('/dashboard');
-  //     }
-  //   }
-  // }, [navigate, setIsAuthenticated]);
+    if (token && tokenExpiry) {
+      const isExpired = Date.now() > parseInt(tokenExpiry, 10);
+      if (isExpired) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('tokenExpiry');
+        setIsAuthenticated(false);
+      } else {
+        setIsAuthenticated(true);
+        navigate('/dashboard');
+      }
+    }
+  }, [navigate, setIsAuthenticated]);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError('');
-  //   setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-  //   try {
-  //     const response = await API.post('/api/auth/login', {
-  //       user_id_ent: email,
-  //       password_ent: password,
-  //     });
-  //     console.log(response)
+    try {
+      const response = await API.post('/api/auth/login', {
+        user_id_ent: email,
+        password_ent: password,
+      });
+      console.log(response)
 
-  //     if (response.status === 200) {
-  //       setIsAuthenticated(true);
-  //       localStorage.setItem('authToken', response.data.token);
-  //       localStorage.setItem(
-  //         'tokenExpiry',
-  //         (Date.now() + TOKEN_EXPIRY_DURATION).toString()
-  //       );
-  //       navigate('/dashboard');
-  //     } else {
-  //       setError('Invalid email or password');
-  //     }
-  //   } catch (err) {
-  //     setError('Failed to login. Please try again later.');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      if (response.status === 200) {
+        setIsAuthenticated(true);
+        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem(
+          'tokenExpiry',
+          (Date.now() + TOKEN_EXPIRY_DURATION).toString()
+        );
+        navigate('/dashboard');
+      } else {
+        setError('Invalid email or password');
+      }
+    } catch (err) {
+      setError('Failed to login. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
@@ -78,7 +78,7 @@ const Login = ({ setIsAuthenticated }) => {
             Enter your credentials to access the admin dashboard
           </p>
         </div>
-        <form className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email

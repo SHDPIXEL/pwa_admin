@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router';
+import React, { useState } from "react";
+import { NavLink } from "react-router";
 import {
   Home,
   ChevronDown,
@@ -14,47 +14,47 @@ import {
   Calendar,
   ShoppingCart,
   ChartBarStacked,
-  TicketCheck
-} from 'lucide-react';
-import logo from "../assets/images/Breboot.png"
+  TicketCheck,
+} from "lucide-react";
+import logo from "../assets/images/Breboot.png";
 
 const Sidebar = ({ setIsAuthenticated }) => {
   const [openSubmenus, setOpenSubmenus] = useState({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // const handleLogout = () => {
-  //   localStorage.removeItem('authToken');
-  //   localStorage.removeItem('tokenExpiry')
-  //   setIsAuthenticated(false);
-  // }
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("tokenExpiry");
+    setIsAuthenticated(false);
+  };
 
   const menuStructure = [
-    { path: '/dashboard', name: 'Dashboard', icon: Home, type: 'link' },
+    { path: "/dashboard", name: "Dashboard", icon: Home, type: "link" },
     {
-      name: 'Weeks',
+      name: "Weeks",
       icon: Calendar,
-      type: 'submenu',
+      type: "submenu",
       submenuItems: [
-        { path: '/week/list', name: 'Week List', icon: Rows3 },
-        { path: '/week/add', name: 'Week Add', icon: Plus },
+        { path: "/week/list", name: "Week List", icon: Rows3 },
+        { path: "/week/add", name: "Week Add", icon: Plus },
       ],
     },
     {
-      name: 'Challenges',
+      name: "Challenges",
       icon: Swords,
-      type: 'submenu',
+      type: "submenu",
       submenuItems: [
-        { path: '/challenges/list', name: 'Challenges List', icon: Rows3 },
-        { path: '/challenges/add', name: 'Add Challenges', icon: Plus },
+        { path: "/challenges/list", name: "Challenges List", icon: Rows3 },
+        { path: "/challenges/add", name: "Add Challenges", icon: Plus },
       ],
     },
     {
-      name: 'Product',
+      name: "Product",
       icon: ShoppingCart,
-      type: 'submenu',
+      type: "submenu",
       submenuItems: [
-        { path: '/product/list', name: 'Product List', icon: Rows3 },
-        { path: '/product/add', name: 'Add Product', icon: Plus },
+        { path: "/product/list", name: "Product List", icon: Rows3 },
+        { path: "/product/add", name: "Add Product", icon: Plus },
       ],
     },
     // {
@@ -67,12 +67,12 @@ const Sidebar = ({ setIsAuthenticated }) => {
     //   ],
     // },
     {
-      name: 'Rewards',
+      name: "Rewards",
       icon: TicketCheck,
-      type: 'submenu',
+      type: "submenu",
       submenuItems: [
-        { path: '/rewards/list', name: 'Reward List', icon: Rows3 },
-        { path: '/rewards/add', name: 'Add Reward', icon: Plus },
+        { path: "/rewards/list", name: "Reward List", icon: Rows3 },
+        { path: "/rewards/add", name: "Add Reward", icon: Plus },
       ],
     },
     // { path: '/PaymentList', name: 'Payment Info', icon: Banknote, type: 'link' },
@@ -87,14 +87,15 @@ const Sidebar = ({ setIsAuthenticated }) => {
   };
 
   const renderMenuItem = (item) => {
-    if (item.type === 'link') {
+    if (item.type === "link") {
       return (
         <NavLink
           to={item.path}
           className={({ isActive }) =>
-            `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-150 ${isActive
-              ? 'bg-gray-200 text-gray-900 font-medium'
-              : 'text-gray-700 hover:bg-gray-300'
+            `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-150 ${
+              isActive
+                ? "bg-gray-200 text-gray-900 font-medium"
+                : "text-gray-700 hover:bg-gray-300"
             }`
           }
           onClick={() => setIsSidebarOpen(false)}
@@ -105,7 +106,7 @@ const Sidebar = ({ setIsAuthenticated }) => {
       );
     }
 
-    if (item.type === 'submenu') {
+    if (item.type === "submenu") {
       return (
         <>
           <button
@@ -130,9 +131,10 @@ const Sidebar = ({ setIsAuthenticated }) => {
                   <NavLink
                     to={subItem.path}
                     className={({ isActive }) =>
-                      `flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-150 ${isActive
-                        ? 'bg-gray-200 text-gray-900 font-medium'
-                        : 'text-gray-700 hover:bg-gray-300'
+                      `flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors duration-150 ${
+                        isActive
+                          ? "bg-gray-200 text-gray-900 font-medium"
+                          : "text-gray-700 hover:bg-gray-300"
                       }`
                     }
                     onClick={() => setIsSidebarOpen(false)}
@@ -156,7 +158,11 @@ const Sidebar = ({ setIsAuthenticated }) => {
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         className="lg:hidden fixed top-4 right-4 z-50 p-2 text-black"
       >
-        {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        {isSidebarOpen ? (
+          <X className="w-6 h-6" />
+        ) : (
+          <Menu className="w-6 h-6" />
+        )}
       </button>
 
       {/* Overlay for mobile */}
@@ -169,12 +175,13 @@ const Sidebar = ({ setIsAuthenticated }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-40 w-72 h-screen bg-[#f9f9f9] text-gray-300 shadow-lg border-r border-gray-200 flex flex-col flex-shrink-0 text-sm transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-          }`}
+        className={`fixed lg:static inset-y-0 left-0 z-40 w-72 h-screen bg-[#f9f9f9] text-gray-300 shadow-lg border-r border-gray-200 flex flex-col flex-shrink-0 text-sm transform transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
       >
         {/* Logo Section */}
         <div className="p-6 border-b border-gray-300 flex items-center justify-center flex-shrink-0">
-          <img className='w-44 h-auto' src={logo} alt="breboot-logo" />
+          <img className="w-44 h-auto" src={logo} alt="breboot-logo" />
         </div>
 
         {/* Navigation Section */}
@@ -200,6 +207,7 @@ const Sidebar = ({ setIsAuthenticated }) => {
               <p className="text-xs text-gray-900">Admin</p>
             </div>
             <button
+              onClick={handleLogout}
               className="hover:bg-gray-300 p-2 rounded-md"
             >
               <LogOut className="w-5 h-5 text-gray-900" />
