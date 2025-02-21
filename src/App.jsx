@@ -37,7 +37,8 @@ function App() {
               <Route path='product/add' element={<AddProduct />} />
               <Route path='product/list' element={<ListProduct />} />
               {/* <Route path='rewardcategory/add' element={<AddRewardCategory />} /> */}
-              {/* <Route path='rewardcategory/list' element={<ListRewardCategory /> }/> */}
+              {/* <Route path='rewardcategory/list'
+               element={<ListRewardCategory /> }/> */}
               <Route path='rewards/add' element={<AddRewards />} />
               <Route path='rewards/list' element={ <ListRewards/> } />
             </Route>
