@@ -2,8 +2,7 @@ import React from "react";
 
 const validAccessors = ["images", "image"];
 
-const Table = ({ columns, data, globalActions }) => {
-
+const Table = ({ columns, data, globalActions, toggleInStock }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full border-collapse border border-gray-200 bg-white shadow-md rounded-lg md:text-sm text-xs">
@@ -11,11 +10,18 @@ const Table = ({ columns, data, globalActions }) => {
         <thead>
           <tr className="bg-gray-100 text-left text-gray-600 font-semibold uppercase tracking-wider">
             {columns.map((column, index) => (
-              <th key={index} className="px-6 py-3 border-b border-gray-200">
+              <th
+                key={index}
+                className="px-6 py-3 text-center border-b border-gray-200"
+              >
                 {column.header}
               </th>
             ))}
-            {globalActions && <th className="px-6 py-3 border-b border-gray-200">Actions</th>}
+            {globalActions && (
+              <th className="px-6 py-3 border-b text-center border-gray-200">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
 
@@ -31,14 +37,14 @@ const Table = ({ columns, data, globalActions }) => {
               {columns.map((column, colIndex) => (
                 <td
                   key={colIndex}
-                  className="px-6 py-4 border-b border-gray-200 text-gray-700"
+                  className="px-6 py-4 border-b text-center border-gray-200 text-gray-700"
                 >
-                  {renderCellContent(column, row)}
+                  {renderCellContent(column, row, toggleInStock)}
                 </td>
               ))}
 
               {globalActions && (
-                <td className="px-6 py-4 border-b border-gray-200 text-gray-700">
+                <td className="px-6 py-4 border-b text-center border-gray-200 text-gray-700">
                   <div className="flex gap-2">
                     {globalActions.map((action, actionIndex) => (
                       <button
@@ -61,8 +67,26 @@ const Table = ({ columns, data, globalActions }) => {
 };
 
 // Helper function to render cell content based on column type
-const renderCellContent = (column, row) => {
+const renderCellContent = (column, row, toggleInStock) => {
   const value = row[column.accessor];
+
+  // Render checkbox for inStock column
+  if (column.accessor === "inStock") {
+    return (
+      <div className="flex justify-center">
+        <input
+          type="checkbox"
+          checked={row.inStock === true}
+          onChange={() => toggleInStock(row)}
+          className="w-5 h-5 cursor-pointer appearance-none border border-gray-400 rounded-full 
+                     checked:bg-[#f8bd77] checked:border-[#545051] 
+                     relative flex items-center justify-center transition-all duration-200 hover:scale-105
+                     before:content-['✔'] before:absolute before:text-[#545051] before:font-bold before:text-xs 
+                     before:opacity-0 checked:before:opacity-100"
+        />
+      </div>
+    );
+  }
 
   // Handle tags
   if (column.accessor === "tags" && Array.isArray(value)) {
@@ -81,7 +105,7 @@ const renderCellContent = (column, row) => {
   }
 
   // Handle images
-  if (validAccessors.includes(column.accessor) && value) {    
+  if (validAccessors.includes(column.accessor) && value) {
     return (
       <img
         src={value}
