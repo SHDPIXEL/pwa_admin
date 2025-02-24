@@ -1,6 +1,7 @@
 import React from "react";
+import { BASE_URL } from "../lib/utils";
 
-const validAccessors = ["images", "image"];
+const validAccessors = ["images", "image", "product_image"];
 
 const Table = ({ columns, data, globalActions, toggleInStock }) => {
   return (
@@ -87,6 +88,68 @@ const renderCellContent = (column, row, toggleInStock) => {
       </div>
     );
   }
+
+  if (column.accessor === "product_image" && value) {
+    const cleanedValue = value.replace(/^"|"$/g, "");
+    const imageUrl = `${BASE_URL}/${cleanedValue}`;
+    return (
+      <img
+        key="1"
+        src={imageUrl}
+        alt={`Product Image`}
+        className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105"
+      />
+    );
+  }
+
+  if (column.accessor === "reward_image" && value) {
+    try {
+      // Parse the array string into an actual array
+      const parsedArray = JSON.parse(value);
+
+      // Ensure it's an array and get the first item
+      const cleanedValue = Array.isArray(parsedArray)
+        ? parsedArray[0].replace(/^"|"$/g, "")
+        : "";
+
+      // Construct the correct image URL
+      const imageUrl = `${BASE_URL}/${cleanedValue}`;
+
+      return (
+        <img
+          key="1"
+          src={imageUrl}
+          alt="Reward Image"
+          className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105"
+        />
+      );
+    } catch (error) {
+      console.error("Invalid image data:", value, error);
+      return null; // Return nothing if parsing fails
+    }
+  }
+
+  if (column.accessor === "challenge_images" && Array.isArray(value)) {
+    return (
+      <div className="flex space-x-2">
+        {value.map((imgSrc, index) => {
+          const cleanedValue = imgSrc.replace(/^"|"$/g, ""); // Remove extra quotes if needed
+          const imageUrl = `${BASE_URL}/${cleanedValue}`;
+  
+          return (
+            <img
+              key={index}
+              src={imageUrl}
+              alt={`Challenge Image ${index + 1}`}
+              className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105"
+            />
+          );
+        })}
+      </div>
+    );
+  }
+  
+  
 
   // Handle tags
   if (column.accessor === "tags" && Array.isArray(value)) {
