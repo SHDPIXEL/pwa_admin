@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Base URL for the API
-export const BASE_URL = "http://192.168.1.4:4040"; // Replace with your server's base URL
+export const BASE_URL = "http://192.168.1.11:4040"; // Replace with your server's base URL
 // export const BASE_URL = "http://192.168.2.244:4050"; // Replace with your server's base URL
 // export const BASE_URL = "https://royalumrahback.demo.shdpixel.com/"; // Replace with your server's base URL
 
