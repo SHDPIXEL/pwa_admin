@@ -72,41 +72,58 @@ const AddSubChallenge = () => {
       const fetchChallengeData = async () => {
         try {
           const response = await API.get(`/admin/get/challenge/${challengeId}`);
-
+  
           if (!response.data) {
             throw new Error("Invalid response data");
           }
-
+  
           const challenge = response.data;
-
-          // Parse descriptions and challenge_images safely
-          const parsedDescriptions = challenge.descriptions
-            ? JSON.parse(challenge.descriptions)
-            : ["", "", ""];
-
-          const parsedImages = challenge.challenge_images
-            ? JSON.parse(challenge.challenge_images)
-            : [null, null, null];
-
+  
+          // Safe parsing for descriptions
+          let parsedDescriptions = ["", "", ""];
+          if (challenge.descriptions) {
+            if (typeof challenge.descriptions === "string") {
+              try {
+                parsedDescriptions = JSON.parse(challenge.descriptions);
+              } catch (error) {
+                parsedDescriptions = challenge.descriptions.includes(",")
+                  ? challenge.descriptions.split(",").map((desc) => desc.trim()) // Ensure trimming spaces
+                  : [challenge.descriptions];
+              }
+            } else if (Array.isArray(challenge.descriptions)) {
+              parsedDescriptions = challenge.descriptions;
+            }
+          }
+  
+          // Safe parsing for challenge_images
+          let parsedImages = [null, null, null];
+          if (challenge.challenge_images) {
+            if (typeof challenge.challenge_images === "string") {
+              try {
+                parsedImages = JSON.parse(challenge.challenge_images);
+              } catch (error) {
+                parsedImages = [challenge.challenge_images];
+              }
+            } else if (Array.isArray(challenge.challenge_images)) {
+              parsedImages = challenge.challenge_images;
+            }
+          }
+  
           // Fetch weeks to map weekId to weekName
           const weeksResponse = await API.get("/admin/week");
           const weekMap = {};
           weeksResponse.data?.forEach((week) => {
             weekMap[week.id] = week.name;
           });
-
+  
           setFormData({
             id: challenge.id ?? null,
             name: challenge.name ?? "",
             shortDescription: challenge.shortDescription ?? "",
             weekId: challenge.weekId ?? "",
             weekName: weekMap[challenge.weekId] || "Unknown",
-            descriptions: Array.isArray(parsedDescriptions)
-              ? parsedDescriptions
-              : ["", "", ""],
-            challenge_images: Array.isArray(parsedImages)
-              ? parsedImages
-              : [null, null, null],
+            descriptions: parsedDescriptions, // Ensure this is an array
+            challenge_images: parsedImages,
             rewards: challenge.rewards ?? "",
             status: challenge.status ?? "",
           });
@@ -115,10 +132,12 @@ const AddSubChallenge = () => {
           toast.error("Failed to fetch challenge data.");
         }
       };
-
+  
       fetchChallengeData();
     }
   }, [challengeId]);
+  
+  
 
   // Handle input change
   const handleChange = (e) => {
