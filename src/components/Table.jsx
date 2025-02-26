@@ -131,25 +131,25 @@ const renderCellContent = (column, row, toggleInStock) => {
 
   if (column.accessor === "challenge_images" && Array.isArray(value)) {
     return (
-      <div className="flex space-x-2">
-        {value.map((imgSrc, index) => {
-          const cleanedValue = imgSrc.replace(/^"|"$/g, ""); // Remove extra quotes if needed
-          const imageUrl = `${BASE_URL}/${cleanedValue}`;
+      <div className="grid grid-cols-2 justify-center items-center text-center space-x-2 w-30">
+        {value
+          .filter((imgSrc) => imgSrc) // ✅ Remove null/undefined values
+          .map((imgSrc, index) => {
+            const cleanedValue = imgSrc ? imgSrc.replace(/^"|"$/g, "") : ""; // ✅ Prevent null errors
+            const imageUrl = `${BASE_URL}/${cleanedValue}`;
   
-          return (
-            <img
-              key={index}
-              src={imageUrl}
-              alt={`Challenge Image ${index + 1}`}
-              className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105"
-            />
-          );
-        })}
+            return (
+              <img
+                key={index}
+                src={imageUrl}
+                alt={`Challenge Image ${index + 1}`}
+                className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105"
+              />
+            );
+          })}
       </div>
     );
   }
-  
-  
 
   // Handle tags
   if (column.accessor === "tags" && Array.isArray(value)) {

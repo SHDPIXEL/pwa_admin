@@ -72,13 +72,13 @@ const AddSubChallenge = () => {
       const fetchChallengeData = async () => {
         try {
           const response = await API.get(`/admin/get/challenge/${challengeId}`);
-  
+
           if (!response.data) {
             throw new Error("Invalid response data");
           }
-  
+
           const challenge = response.data;
-  
+
           // Safe parsing for descriptions
           let parsedDescriptions = ["", "", ""];
           if (challenge.descriptions) {
@@ -94,7 +94,7 @@ const AddSubChallenge = () => {
               parsedDescriptions = challenge.descriptions;
             }
           }
-  
+
           // Safe parsing for challenge_images
           let parsedImages = [null, null, null];
           if (challenge.challenge_images) {
@@ -108,14 +108,14 @@ const AddSubChallenge = () => {
               parsedImages = challenge.challenge_images;
             }
           }
-  
+
           // Fetch weeks to map weekId to weekName
           const weeksResponse = await API.get("/admin/week");
           const weekMap = {};
           weeksResponse.data?.forEach((week) => {
             weekMap[week.id] = week.name;
           });
-  
+
           setFormData({
             id: challenge.id ?? null,
             name: challenge.name ?? "",
@@ -132,12 +132,10 @@ const AddSubChallenge = () => {
           toast.error("Failed to fetch challenge data.");
         }
       };
-  
+
       fetchChallengeData();
     }
   }, [challengeId]);
-  
-  
 
   // Handle input change
   const handleChange = (e) => {
@@ -363,11 +361,12 @@ const AddSubChallenge = () => {
               </label>
 
               {/* Preview Selected Image */}
+              {/* Preview Selected Image */}
               {formData.challenge_images[index] && (
                 <div className="mt-2 flex items-center gap-2">
                   {typeof formData.challenge_images[index] === "string" ? (
                     <img
-                      src={formData.challenge_images[index]}
+                      src={`https://2ej9ufdjyb.ap-south-1.awsapprunner.com/${formData.challenge_images[index]}`}
                       alt={`Challenge Image ${index + 1}`}
                       className="h-16 w-16 object-cover rounded"
                     />
