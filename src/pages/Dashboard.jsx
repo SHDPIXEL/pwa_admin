@@ -173,10 +173,10 @@ const Dashboard = () => {
       value: totalChallenges,
       icon: <Swords className="w-5 h-5" />,
     },
-    { title: "Total Redeem", value: 78, icon: <Type className="w-5 h-5" /> },
+    { title: "Total Redeem", value: 00, icon: <Type className="w-5 h-5" /> },
     {
       title: "Total Items Sold",
-      value: 45,
+      value: 00,
       icon: <Type className="w-5 h-5" />,
     },
   ];
