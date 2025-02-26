@@ -173,17 +173,17 @@ const Dashboard = () => {
       value: totalChallenges,
       icon: <Swords className="w-5 h-5" />,
     },
-    { title: "Total Redeem", value: 00, icon: <Type className="w-5 h-5" /> },
+    { title: "Total Redeem", value: "0", icon: <Type className="w-5 h-5" /> },
     {
       title: "Total Items Sold",
-      value: 00,
+      value: "0",
       icon: <Type className="w-5 h-5" />,
     },
   ];
 
-  // if (loading) {
-  //   return <div className="text-center mt-10">Loading...</div>;
-  // }
+  if (loading) {
+    return <div className="text-center mt-10">Loading...</div>;
+  }
 
   if (error) {
     return <div className="text-center mt-10 text-red-500">{error}</div>;
