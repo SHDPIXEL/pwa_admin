@@ -275,7 +275,7 @@ const AddRewards = () => {
           {/* Preview Image */}
           {formData.reward_image && (
             <img
-              src={formData.reward_image}
+            src={`https://2ej9ufdjyb.ap-south-1.awsapprunner.com/${formData.reward_image}`}
               alt="Preview"
               className="mt-2 w-32 h-32 object-cover rounded-lg"
             />

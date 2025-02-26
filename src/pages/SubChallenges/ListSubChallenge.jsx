@@ -202,11 +202,11 @@ const ListSubChallenge = () => {
         navigate("/challenges/add", { state: { challengeData: row } }),
       className: "text-green-500 hover:text-green-600",
     },
-    {
-      label: <Trash2 className="w-4 h-4" />,
-      handler: (row) => deleteSubChallenge(row.id),
-      className: "text-red-500 hover:text-red-600",
-    },
+    // {
+    //   label: <Trash2 className="w-4 h-4" />,
+    //   handler: (row) => deleteSubChallenge(row.id),
+    //   className: "text-red-500 hover:text-red-600",
+    // },
     {
       label: <RefreshCcw className="w-4 h-4" />,
       handler: (row) => updateStatus(row),

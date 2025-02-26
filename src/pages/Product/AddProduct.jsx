@@ -316,7 +316,7 @@ const AddProduct = () => {
           {/* Image preview */}
           {formData.product_image && (
             <img
-              src={formData.product_image}
+              src={`https://2ej9ufdjyb.ap-south-1.awsapprunner.com/${formData.product_image}`}
               alt="Preview"
               className="mt-2 w-32 h-32 object-cover rounded-lg"
             />
