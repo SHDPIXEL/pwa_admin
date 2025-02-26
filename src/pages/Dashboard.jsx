@@ -237,6 +237,36 @@ const Dashboard = () => {
           Doctor's <span className="text-[#00C49F]">vs</span> Patient's
         </p>
       </div>
+
+      {/* Pie Chart */}
+      <div className="h-80 flex flex-col items-center justify-center shadow-sm bg-white p-6 space-y-5">
+        <ResponsiveContainer>
+          <PieChart>
+            <Pie
+              activeIndex={activeIndex}
+              activeShape={renderActiveShape}
+              data={UserAgentPieCharData}
+              cx="50%"
+              cy="50%"
+              innerRadius={37}
+              outerRadius={55}
+              fill="#8884d8"
+              dataKey="value"
+              onMouseEnter={onPieEnter}
+            >
+              {UserAgentPieCharData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+        <p className="font-bold text-gray-600 text-xl mt-2">
+          Doctor's <span className="text-[#00C49F]">vs</span> Patient's
+        </p>
+      </div>
     </div>
   );
 };
