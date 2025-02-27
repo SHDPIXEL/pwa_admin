@@ -6,17 +6,18 @@ import {
   ChevronUp,
   Plus,
   Rows3,
-  PersonStanding,
+  UserCheck,
   LogOut,
   Menu,
+  Users,
   X,
   Swords,
   Calendar,
   ShoppingCart,
-  ChartBarStacked,
+  Stethoscope,
   TicketCheck,
 } from "lucide-react";
-import logo from "../assets/images/Breboot.png";
+import logo from "../assets/Breboot-Logo.svg";
 
 const Sidebar = ({ setIsAuthenticated }) => {
   const [openSubmenus, setOpenSubmenus] = useState({});
@@ -48,6 +49,7 @@ const Sidebar = ({ setIsAuthenticated }) => {
         { path: "/challenges/add", name: "Add Challenges", icon: Plus },
       ],
     },
+    { path: "/challengeformlist", name: "Challenge-Form", icon: UserCheck, type: "link" },
     {
       name: "Product",
       icon: ShoppingCart,
@@ -75,6 +77,8 @@ const Sidebar = ({ setIsAuthenticated }) => {
         { path: "/rewards/add", name: "Add Reward", icon: Plus },
       ],
     },
+    { path: "/doctorsList", name: "Doctors's", icon: Stethoscope, type: "link" },
+    { path: "/patientList", name: "Patient's", icon: Users, type: "link" },
     // { path: '/PaymentList', name: 'Payment Info', icon: Banknote, type: 'link' },
     // { path: '/inquirylist', name: 'Inquiry', icon: MessageSquareHeart, type: 'link' },
   ];

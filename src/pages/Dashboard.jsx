@@ -32,7 +32,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const response = await API.get("/admin/users");
-        const parsedata = response.data.data;
+        const parsedata = response.data.users;
         // Count total users
         const totalUsers = parsedata.length;
         // Count users who are doctors
@@ -54,7 +54,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const response = await API.get("/admin/users");
-        const parsedata = response.data.data;
+        const parsedata = response.data.users;
         // Count total users
         const totalUsers = parsedata.length;
         // Count users who are doctors

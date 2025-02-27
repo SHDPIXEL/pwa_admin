@@ -1,10 +1,10 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import AddWeek from "./pages/Week/AddWeek";
 import ListWeek from "./pages/Week/ListWeek";
-import ProtectedRoute from './helper/ProtectedRoute';
+import ProtectedRoute from "./helper/ProtectedRoute";
 import { HelmetProvider } from "react-helmet-async";
 import AddChallenge from "./pages/SubChallenges/AddSubChallenge";
 import ListChallenge from "./pages/SubChallenges/ListSubChallenge";
@@ -12,9 +12,12 @@ import AddProduct from "./pages/Product/AddProduct";
 import ListProduct from "./pages/Product/ListProduct";
 import AddRewardCategory from "./pages/RewardCategory.jsx/addRewardCategory";
 import ListRewardCategory from "./pages/RewardCategory.jsx/listRewardCategory";
+import ChallengeFormList from "./pages/challengesForms";
+import DoctorsList from "./pages/doctorsList";
 import AddRewards from "./pages/Rewards/AddRewards";
 import ListRewards from "./pages/Rewards/ListReward";
 import Login from "./pages/Login";
+import PatientList from "./pages/patientList";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -70,6 +73,9 @@ function App() {
               {/* <Route path='rewardcategory/add' element={<AddRewardCategory />} /> */}
               {/* <Route path='rewardcategory/list'
                element={<ListRewardCategory /> }/> */}
+              <Route path="challengeformlist" element={<ChallengeFormList />} />
+              <Route path="doctorsList" element={<DoctorsList />} />
+              <Route path="patientList" element={<PatientList />} />
               <Route path="rewards/add" element={<AddRewards />} />
               <Route path="rewards/list" element={<ListRewards />} />
             </Route>

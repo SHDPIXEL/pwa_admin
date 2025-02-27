@@ -45,13 +45,20 @@ const Table = ({ columns, data, globalActions, toggleInStock }) => {
               ))}
 
               {globalActions && (
-                <td className="px-6 py-4 border-b text-center border-gray-200 text-gray-700">
-                  <div className="flex gap-2">
+                <td className="px-6 py-4 border-b border-gray-200 text-gray-700 text-center">
+                  <div className="inline-flex gap-2">
                     {globalActions.map((action, actionIndex) => (
                       <button
                         key={actionIndex}
                         onClick={() => action.handler(row)}
-                        className={`px-3 py-1 text-sm rounded-md ${action.className}`}
+                        disabled={row.isVerified === 1 || row.isVerified === 2} // Disable button for Approved & Rejected
+                        className={`px-3 py-1 text-sm rounded-md ${
+                          action.className
+                        } ${
+                          row.isVerified === true || row.isVerified === 2
+                            ? "opacity-0 cursor-not-allowed"
+                            : ""
+                        }`}
                       >
                         {action.label}
                       </button>
@@ -137,7 +144,7 @@ const renderCellContent = (column, row, toggleInStock) => {
           .map((imgSrc, index) => {
             const cleanedValue = imgSrc ? imgSrc.replace(/^"|"$/g, "") : ""; // ✅ Prevent null errors
             const imageUrl = `${BASE_URL}/${cleanedValue}`;
-  
+
             return (
               <img
                 key={index}
@@ -149,6 +156,67 @@ const renderCellContent = (column, row, toggleInStock) => {
           })}
       </div>
     );
+  }
+
+  // if (column.accessor === "mediaFiles" && Array.isArray(value)) {
+  //   return (
+  //     <div className="grid grid-cols-2 justify-center items-center text-center space-x-2 w-30">
+  //       {value
+  //         .filter((imgSrc) => imgSrc) // ✅ Remove null/undefined values
+  //         .map((imgSrc, index) => {
+  //           const cleanedValue = imgSrc ? imgSrc.replace(/^"|"$/g, "") : ""; // ✅ Prevent null errors
+  //           const imageUrl = `${BASE_URL}/${cleanedValue}`;
+
+  //           return (
+  //             <img
+  //               key={index}
+  //               src={imageUrl}
+  //               alt={`Challenge Image ${index + 1}`}
+  //               className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105"
+  //             />
+  //           );
+  //         })}
+  //     </div>
+  //   );
+  // }
+
+  if (column.accessor === "mediaFiles" && value) {
+    try {
+      // Parse the JSON-encoded array if needed
+      const parsedValue = JSON.parse(value);
+
+      // Ensure it's an array (some cases might return a string)
+      const mediaArray = Array.isArray(parsedValue)
+        ? parsedValue
+        : [parsedValue];
+
+      if (row.mediaType === "images") {
+        return (
+          <div className="flex">
+            {mediaArray.map((image, index) => (
+              <img
+                key={index}
+                src={`${BASE_URL}/${image.trim()}`}
+                alt={`Challenge-Form Image ${index + 1}`}
+                className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105"
+              />
+            ))}
+          </div>
+        );
+      } else if (row.mediaType === "video") {
+        return (
+          <video
+            key="video"
+            src={`${BASE_URL}/${mediaArray[0]}`} // Only one video
+            controls
+            className="w-24 h-24 rounded-md border border-gray-200"
+          />
+        );
+      }
+    } catch (error) {
+      console.error("Error parsing media files:", error);
+      return <p className="text-red-500">Invalid media format</p>;
+    }
   }
 
   // Handle tags
@@ -165,6 +233,15 @@ const renderCellContent = (column, row, toggleInStock) => {
         ))}
       </div>
     );
+  }
+
+  // Handle Status column
+  if (column.accessor === "isVerified") {
+    if (value === true)
+      return <span className="text-green-500 font-semibold">Approved</span>;
+    if (value === 2)
+      return <span className="text-red-500 font-semibold">Rejected</span>;
+    return <span className="text-yellow-500 font-semibold">Pending</span>;
   }
 
   // Handle images
