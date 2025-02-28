@@ -21,7 +21,6 @@ const AddProduct = () => {
     name: "",
     description: "",
     oldPrice: "",
-    newPrice: "",
     status: "",
     product_image: null,
     inStock: true,
@@ -35,7 +34,6 @@ const AddProduct = () => {
         name: productData.name || "",
         description: productData.description || "",
         oldPrice: productData.oldPrice || "",
-        newPrice: productData.newPrice || "",
         status: productData.status || "",
         product_image: productData.product_image || "",
         inStock: productData.inStock ?? true,
@@ -55,7 +53,6 @@ const AddProduct = () => {
             name: response.data.product.name,
             description: response.data.product.description,
             oldPrice: response.data.product.oldPrice,
-            newPrice: response.data.product.newPrice,
             status: response.data.product.status,
             product_image: response.data.product.product_image || null,
             inStock: response.data.product.inStock ?? true,
@@ -105,7 +102,6 @@ const AddProduct = () => {
       if (formData.description)
         productData.append("description", formData.description);
       if (formData.oldPrice) productData.append("oldPrice", formData.oldPrice);
-      if (formData.newPrice) productData.append("newPrice", formData.newPrice);
 
       // Log and Append Image
       if (
@@ -150,7 +146,6 @@ const AddProduct = () => {
         name: "",
         description: "",
         oldPrice: "",
-        newPrice: "",
         status: "",
         product_image: null,
         inStock: true,
@@ -234,27 +229,6 @@ const AddProduct = () => {
             onChange={handleChange}
             className="p-3 rounded-lg border border-gray-300"
             placeholder="Enter Old Price"
-            required
-          />
-        </div>
-
-        {/* New Price */}
-        <div className="flex flex-col">
-          <label
-            htmlFor="newPrice"
-            className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2"
-          >
-            <IndianRupee className="h-4 w-4 text-gray-400" />
-            New Price
-          </label>
-          <input
-            type="number"
-            name="newPrice"
-            id="newPrice"
-            value={formData.newPrice}
-            onChange={handleChange}
-            className="p-3 rounded-lg border border-gray-300"
-            placeholder="Enter New Price"
             required
           />
         </div>
