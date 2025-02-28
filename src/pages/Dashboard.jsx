@@ -22,7 +22,10 @@ const Dashboard = () => {
   const [doctorData, setDoctorsData] = useState();
   const [otherUsers, setOtherUsers] = useState();
   const [totalChallenges, setChallenges] = useState();
-  const [totalRooms, SetTotalRooms] = useState();
+  const [totalRedeems, setRedeems] = useState();
+  const [soldItems, SetSoldItems] = useState();
+  const [redeemGraph, SetRedeemGraph] = useState();
+  const [soldItemsGraph, SetSoldItemsGraph] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -88,28 +91,58 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await API.get("/admin/agent");
-  //       const parsedata = response.data;
-  //       setTotalAgents(parsedata.length);
-  //       setLoading(false);
-  //     } catch (err) {
-  //       console.error(err);
-  //       setError("Failed to fetch dashboard data.");
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await API.get("/admin/soldItems");
+        const parsedata = response.data;
+        SetSoldItems(parsedata.length);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch dashboard data.");
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await API.get("/admin/redeem");
+        const parsedata = response.data.redeemedRewards;
+        setRedeems(parsedata.length);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch dashboard data.");
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await API.get("/admin/redeem/graph");
+        SetRedeemGraph(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch dashboard data.");
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
-  //       const response = await API.get("/admin/room");
-  //       const parsedata = response.data;
-  //       SetTotalRooms(parsedata.length);
+  //       const response = await API.get("/admin/soldItemsGraph");
+  //       SetSoldItemsGraph(response.data.data);
   //       setLoading(false);
   //     } catch (err) {
   //       console.error(err);
@@ -173,10 +206,14 @@ const Dashboard = () => {
       value: totalChallenges,
       icon: <Swords className="w-5 h-5" />,
     },
-    { title: "Total Redeem", value: "0", icon: <Type className="w-5 h-5" /> },
+    {
+      title: "Total Redeems",
+      value: totalRedeems,
+      icon: <Type className="w-5 h-5" />,
+    },
     {
       title: "Total Items Sold",
-      value: "0",
+      value: soldItems,
       icon: <Type className="w-5 h-5" />,
     },
   ];
@@ -208,65 +245,110 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Pie Chart */}
-      <div className="h-80 flex flex-col items-center justify-center shadow-sm bg-white p-6 space-y-5">
-        <ResponsiveContainer>
-          <PieChart>
-            <Pie
-              activeIndex={activeIndex}
-              activeShape={renderActiveShape}
-              data={UserAgentPieCharData}
-              cx="50%"
-              cy="50%"
-              innerRadius={37}
-              outerRadius={55}
-              fill="#8884d8"
-              dataKey="value"
-              onMouseEnter={onPieEnter}
+      {/* Charts Section */}
+      <div className="grid items-center justify-center grid-cols-1 md:grid-cols-2 gap-8 mt-10 px-6">
+        <div className="h-80 flex flex-col items-center justify-center shadow-sm bg-white p-6 space-y-5">
+          <ResponsiveContainer>
+            <LineChart
+              data={redeemGraph}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              {UserAgentPieCharData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
-        <p className="font-bold text-gray-600 text-xl mt-2">
-          Doctor's <span className="text-[#00C49F]">vs</span> Patient's
-        </p>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis
+                dataKey="date"
+                tick={{ fill: "#333" }}
+                tickFormatter={(tick) => {
+                  const date = new Date(tick);
+                  return `${date.getDate()}-${
+                    date.getMonth() + 1
+                  }-${date.getFullYear()}`;
+                }}
+              />
+              <YAxis tick={{ fill: "#333" }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#ffffff",
+                }}
+                itemStyle={{ color: "#333" }}
+              />
+              <Legend wrapperStyle={{ color: "#333" }} />
+              <Line
+                type="monotone"
+                dataKey="redemptions"
+                stroke="#00C49F"
+                strokeWidth={2}
+                activeDot={{ r: 10 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+          <p className="font-bold text-gray-600 text-xl mt-2">Booking Trends</p>
+        </div>
+        {/* Pie Chart */}
+        <div className="h-80 flex flex-col items-center justify-center shadow-sm bg-white p-6 space-y-5">
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                activeIndex={activeIndex}
+                activeShape={renderActiveShape}
+                data={UserAgentPieCharData}
+                cx="50%"
+                cy="50%"
+                innerRadius={37}
+                outerRadius={55}
+                fill="#8884d8"
+                dataKey="value"
+                onMouseEnter={onPieEnter}
+              >
+                {UserAgentPieCharData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+          <p className="font-bold text-gray-600 text-xl mt-2">
+            Doctor's <span className="text-[#00C49F]">vs</span> Patient's
+          </p>
+        </div>
       </div>
-
-      {/* Pie Chart */}
-      <div className="h-80 flex flex-col items-center justify-center shadow-sm bg-white p-6 space-y-5">
+      {/* <div className="h-full flex mt-10 flex-col items-center justify-center shadow-sm bg-white p-6 space-y-5 mx-auto w-3/4">
         <ResponsiveContainer>
-          <PieChart>
-            <Pie
-              activeIndex={activeIndex}
-              activeShape={renderActiveShape}
-              data={UserAgentPieCharData}
-              cx="50%"
-              cy="50%"
-              innerRadius={37}
-              outerRadius={55}
-              fill="#8884d8"
-              dataKey="value"
-              onMouseEnter={onPieEnter}
-            >
-              {UserAgentPieCharData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-          </PieChart>
+          <LineChart
+            data={soldItemsGraph}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+            <XAxis
+              dataKey="date"
+              tick={{ fill: "#333" }}
+              tickFormatter={(tick) => {
+                const date = new Date(tick);
+                return `${date.getDate()}-${
+                  date.getMonth() + 1
+                }-${date.getFullYear()}`;
+              }}
+            />
+            <YAxis tick={{ fill: "#333" }} />
+            <Tooltip
+              contentStyle={{ backgroundColor: "#ffffff" }}
+              itemStyle={{ color: "#333" }}
+            />
+            <Legend wrapperStyle={{ color: "#333" }} />
+            <Line
+              type="monotone"
+              dataKey="payments"
+              stroke="#00C49F"
+              strokeWidth={2}
+              activeDot={{ r: 10 }}
+            />
+          </LineChart>
         </ResponsiveContainer>
-        <p className="font-bold text-gray-600 text-xl mt-2">
-          Doctor's <span className="text-[#00C49F]">vs</span> Patient's
+        <p className="font-bold text-gray-600 text-xl text-center">
+          Booking Trends
         </p>
-      </div>
+      </div> */}
     </div>
   );
 };
