@@ -130,11 +130,11 @@ const ListSubChallenge = () => {
   };
 
   // **Toggle Sub-Challenge Status**
-  const updateUserStatus = async (row) => {
-    confirmAction("Are you sure you want to change the user status?", async () => {
+  const updateStatus = async (row) => {
+    confirmAction("Are you sure you want to change the status?", async () => {
       try {
-        const newStatus = row.userStatus === "Active" ? "Inactive" : "Active";
-  
+        const newStatus = row.status === "Active" ? "Inactive" : "Active";
+
         const token = localStorage.getItem("authToken");
         if (!token) {
           toast.error("Unauthorized. Please login again.", {
@@ -142,10 +142,10 @@ const ListSubChallenge = () => {
           });
           return;
         }
-  
+
         const response = await API.put(
-          `/admin/updateuserstatus/${row.id}`, // ✅ Ensure API route matches backend
-          { userStatus: newStatus }, // ✅ Sending "userStatus" instead of "status"
+          `/admin/update/challenge/${row.id}`,
+          { status: newStatus },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -153,31 +153,31 @@ const ListSubChallenge = () => {
             },
           }
         );
-  
+
         if (response.status === 200) {
-          setUsers((prev) =>
+          setChallenges((prev) =>
             prev.map((item) =>
-              item.id === row.id ? { ...item, userStatus: newStatus } : item
+              item.id === row.id ? { ...item, status: newStatus } : item
             )
           );
-  
-          toast.success(`User status changed to ${newStatus}!`, {
+
+          toast.success(`Status changed to ${newStatus}!`, {
             position: "top-right",
           });
         } else {
           throw new Error("Unexpected response status: " + response.status);
         }
       } catch (error) {
-        console.error("Error updating user status:", error);
+        console.error("Error updating sub-challenge status:", error);
         toast.error(
-          error.response?.data?.message || "Failed to update user status.",
+          error.response?.data?.message || "Failed to update status.",
           {
             position: "top-right",
           }
         );
       }
     });
-  };  
+  };
 
   // **Table Columns**
   const columns = [
@@ -209,7 +209,7 @@ const ListSubChallenge = () => {
     // },
     {
       label: <RefreshCcw className="w-4 h-4" />,
-      handler: (row) => updateUserStatus(row.id),
+      handler: (row) => updateStatus(row),
       className: "text-blue-500 hover:text-blue-600",
     },
   ];
