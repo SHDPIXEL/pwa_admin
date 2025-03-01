@@ -1,9 +1,10 @@
 import React from "react";
 import { BASE_URL } from "../lib/utils";
+import { Download } from "lucide-react";
 
 const validAccessors = ["images", "image", "product_image"];
 
-const Table = ({ columns, data, globalActions, toggleInStock }) => {
+const Table = ({ columns, data, globalActions, toggleInStock,handleDownloadInvoice  }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full border-collapse border border-gray-200 bg-white shadow-md rounded-lg md:text-sm text-xs">
@@ -40,7 +41,7 @@ const Table = ({ columns, data, globalActions, toggleInStock }) => {
                   key={colIndex}
                   className="px-6 py-4 border-b text-center border-gray-200 text-gray-700"
                 >
-                  {renderCellContent(column, row, toggleInStock)}
+                  {renderCellContent(column, row, toggleInStock,handleDownloadInvoice )}
                 </td>
               ))}
 
@@ -75,7 +76,7 @@ const Table = ({ columns, data, globalActions, toggleInStock }) => {
 };
 
 // Helper function to render cell content based on column type
-const renderCellContent = (column, row, toggleInStock) => {
+const renderCellContent = (column, row, toggleInStock,handleDownloadInvoice ) => {
   const value = row[column.accessor];
 
   // Render checkbox for inStock column
@@ -243,6 +244,20 @@ const renderCellContent = (column, row, toggleInStock) => {
       return <span className="text-red-500 font-semibold">Rejected</span>;
     return <span className="text-yellow-500 font-semibold">Pending</span>;
   }
+
+    // Handle Invoices column
+    if (column.accessor === "invoices") {
+      return row.invoiceUrl ? (
+        <button
+          onClick={() => handleDownloadInvoice(row.invoiceUrl)}
+          className="text-blue-500 hover:text-blue-700"
+        >
+          <Download className="w-5 h-5" />
+        </button>
+      ) : (
+        <span className="text-gray-400">No Invoice</span>
+      );
+    }
 
   // Handle images
   if (validAccessors.includes(column.accessor) && value) {

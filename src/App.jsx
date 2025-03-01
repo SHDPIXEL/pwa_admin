@@ -14,6 +14,7 @@ import AddRewardCategory from "./pages/RewardCategory.jsx/addRewardCategory";
 import ListRewardCategory from "./pages/RewardCategory.jsx/listRewardCategory";
 import ChallengeFormList from "./pages/challengesForms";
 import DoctorsList from "./pages/doctorsList";
+import PaymentList from "./pages/paymentsList"
 import AddRewards from "./pages/Rewards/AddRewards";
 import ListRewards from "./pages/Rewards/ListReward";
 import Login from "./pages/Login";
@@ -76,6 +77,7 @@ function App() {
               <Route path="challengeformlist" element={<ChallengeFormList />} />
               <Route path="doctorsList" element={<DoctorsList />} />
               <Route path="patientList" element={<PatientList />} />
+              <Route path="paymentsList" element={<PaymentList />} />
               <Route path="rewards/add" element={<AddRewards />} />
               <Route path="rewards/list" element={<ListRewards />} />
             </Route>

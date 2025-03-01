@@ -14,6 +14,7 @@ import {
   Swords,
   Calendar,
   ShoppingCart,
+  ReceiptText,
   Stethoscope,
   TicketCheck,
 } from "lucide-react";
@@ -79,6 +80,7 @@ const Sidebar = ({ setIsAuthenticated }) => {
     },
     { path: "/doctorsList", name: "Doctors's", icon: Stethoscope, type: "link" },
     { path: "/patientList", name: "Patient's", icon: Users, type: "link" },
+    { path: "/paymentsList", name: "Payment List", icon: ReceiptText, type: "link" },
     // { path: '/PaymentList', name: 'Payment Info', icon: Banknote, type: 'link' },
     // { path: '/inquirylist', name: 'Inquiry', icon: MessageSquareHeart, type: 'link' },
   ];
