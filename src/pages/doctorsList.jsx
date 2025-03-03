@@ -47,10 +47,10 @@ const DoctorsList = () => {
     <div className="p-6">
       <Toaster position="top-right" autoClose={3000} />
       <Helmet>
-        <title>Breboot | Challenge-Form List</title>
+        <title>Breboot | Doctor's List</title>
         <meta name="Week List" content="List of all Weeks" />
       </Helmet>
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">Challenge-Form List</h1>
+      <h1 className="text-2xl font-bold mb-4 text-gray-800">Doctor's List</h1>
       {doctors.length > 0 ? (
         <Table columns={columns} data={doctors}/>
       ) : (

@@ -110,11 +110,11 @@ const DoctorsList = () => {
     <div className="p-6">
       <Toaster position="top-right" autoClose={3000} />
       <Helmet>
-        <title>Breboot | Challenge-Form List</title>
+        <title>Breboot | Payment Invoice List</title>
         <meta name="Week List" content="List of all Weeks" />
       </Helmet>
       <h1 className="text-2xl font-bold mb-4 text-gray-800">
-        Challenge-Form List
+        Payment Invoice List
       </h1>
       {payments.length > 0 ? (
         <Table
