@@ -69,7 +69,7 @@ const DoctorsList = () => {
         setPayments(recentPayments);
       } catch (error) {
         console.error("Error fetching payment invoices:", error);
-        toast.error("Failed to fetch payment invoices.", {
+        toast.error("No payment invoices found.", {
           position: "top-right",
         });
       }
