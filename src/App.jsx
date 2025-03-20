@@ -19,6 +19,7 @@ import AddRewards from "./pages/Rewards/AddRewards";
 import ListRewards from "./pages/Rewards/ListReward";
 import Login from "./pages/Login";
 import PatientList from "./pages/patientList";
+import OrdersList from "./pages/ordersList";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -78,6 +79,7 @@ function App() {
               <Route path="doctorsList" element={<DoctorsList />} />
               <Route path="patientList" element={<PatientList />} />
               <Route path="paymentsList" element={<PaymentList />} />
+              <Route path="ordersList" element={<OrdersList />} />
               <Route path="rewards/add" element={<AddRewards />} />
               <Route path="rewards/list" element={<ListRewards />} />
             </Route>

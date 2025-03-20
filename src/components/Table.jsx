@@ -4,7 +4,13 @@ import { Download } from "lucide-react";
 
 const validAccessors = ["images", "image", "product_image"];
 
-const Table = ({ columns, data, globalActions, toggleInStock,handleDownloadInvoice  }) => {
+const Table = ({
+  columns,
+  data,
+  globalActions,
+  toggleInStock,
+  handleDownloadInvoice,
+}) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full border-collapse border border-gray-200 bg-white shadow-md rounded-lg md:text-sm text-xs">
@@ -41,30 +47,41 @@ const Table = ({ columns, data, globalActions, toggleInStock,handleDownloadInvoi
                   key={colIndex}
                   className="px-6 py-4 border-b text-center border-gray-200 text-gray-700"
                 >
-                  {renderCellContent(column, row, toggleInStock,handleDownloadInvoice )}
+                  {renderCellContent(
+                    column,
+                    row,
+                    toggleInStock,
+                    handleDownloadInvoice
+                  )}
                 </td>
               ))}
 
               {globalActions && (
                 <td className="px-6 py-4 border-b border-gray-200 text-gray-700 text-center">
-                  <div className="inline-flex gap-2">
-                    {globalActions.map((action, actionIndex) => (
-                      <button
-                        key={actionIndex}
-                        onClick={() => action.handler(row)}
-                        disabled={row.isVerified === 1 || row.isVerified === 2} // Disable button for Approved & Rejected
-                        className={`px-3 py-1 text-sm rounded-md ${
-                          action.className
-                        } ${
-                          row.isVerified === true || row.isVerified === 2
-                            ? "opacity-0 cursor-not-allowed"
-                            : ""
-                        }`}
-                      >
-                        {action.label}
-                      </button>
-                    ))}
-                  </div>
+                  {row.paymentStatus === "Verified" ? (
+                    <span>--</span>
+                  ) : (
+                    <div className="inline-flex gap-2">
+                      {globalActions.map((action, actionIndex) => (
+                        <button
+                          key={actionIndex}
+                          onClick={() => action.handler(row)}
+                          disabled={
+                            row.isVerified === 1 || row.isVerified === 2
+                          } // Disable button for Approved & Rejected
+                          className={`px-3 py-1 text-sm rounded-md ${
+                            action.className
+                          } ${
+                            row.isVerified === true || row.isVerified === 2
+                              ? "opacity-0 cursor-not-allowed"
+                              : ""
+                          }`}
+                        >
+                          {action.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </td>
               )}
             </tr>
@@ -76,7 +93,12 @@ const Table = ({ columns, data, globalActions, toggleInStock,handleDownloadInvoi
 };
 
 // Helper function to render cell content based on column type
-const renderCellContent = (column, row, toggleInStock,handleDownloadInvoice ) => {
+const renderCellContent = (
+  column,
+  row,
+  toggleInStock,
+  handleDownloadInvoice
+) => {
   const value = row[column.accessor];
 
   // Render checkbox for inStock column
@@ -157,6 +179,35 @@ const renderCellContent = (column, row, toggleInStock,handleDownloadInvoice ) =>
           })}
       </div>
     );
+  }
+
+  if (column.accessor === "paymentScreenshot" && value) {
+    try {
+      // Ensure value is a string and clean it if necessary
+      const cleanedValue =
+        typeof value === "string" ? value.replace(/^"|"$/g, "").trim() : "";
+
+      if (!cleanedValue) {
+        return <p className="text-gray-500">No proof available</p>;
+      }
+
+      const imageUrl = `${BASE_URL}/${cleanedValue}`;
+
+      return (
+        <div className="flex justify-center items-center">
+          <a href={imageUrl} target="_blank" rel="noopener noreferrer">
+            <img
+              src={imageUrl}
+              alt="Payment Proof"
+              className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105 transition"
+            />
+          </a>
+        </div>
+      );
+    } catch (error) {
+      console.error("Error displaying payment proof:", error);
+      return <p className="text-red-500">Invalid image format</p>;
+    }
   }
 
   // if (column.accessor === "mediaFiles" && Array.isArray(value)) {
@@ -245,19 +296,19 @@ const renderCellContent = (column, row, toggleInStock,handleDownloadInvoice ) =>
     return <span className="text-yellow-500 font-semibold">Pending</span>;
   }
 
-    // Handle Invoices column
-    if (column.accessor === "invoices") {
-      return row.invoiceUrl ? (
-        <button
-          onClick={() => handleDownloadInvoice(row.invoiceUrl)}
-          className="text-blue-500 hover:text-blue-700"
-        >
-          <Download className="w-5 h-5" />
-        </button>
-      ) : (
-        <span className="text-gray-400">No Invoice</span>
-      );
-    }
+  // Handle Invoices column
+  if (column.accessor === "invoices") {
+    return row.invoiceUrl ? (
+      <button
+        onClick={() => handleDownloadInvoice(row.invoiceUrl)}
+        className="text-blue-500 hover:text-blue-700"
+      >
+        <Download className="w-5 h-5" />
+      </button>
+    ) : (
+      <span className="text-gray-400">No Invoice</span>
+    );
+  }
 
   // Handle images
   if (validAccessors.includes(column.accessor) && value) {

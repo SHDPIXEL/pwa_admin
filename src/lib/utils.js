@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Base URL for the API
 export const BASE_URL = "https://2ej9ufdjyb.ap-south-1.awsapprunner.com"; // Replace with your server's base URL
-// export const BASE_URL = "http://192.168.1.11:4040"; // Replace with your server's base URL
+// export const BASE_URL = "http://192.168.203.244:4040"; // Replace with your server's base URL
 
 // Create an Axios instance
 const API = axios.create({
