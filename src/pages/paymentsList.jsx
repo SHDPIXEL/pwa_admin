@@ -117,10 +117,10 @@ const DoctorsList = () => {
 
   // Table columns
   const columns = [
+    { header: "Product Name", accessor: "name" },
     { header: "Order Id", accessor: "orderId" },
     { header: "User Id", accessor: "userId" },
     { header: "Transaction Id", accessor: "transactionId" },
-    { header: "Product Name", accessor: "name" },
     { header: "Payment Proof", accessor: "paymentScreenshot" },
     // { header: "Quantity", accessor: "quantity" },
     // { header: "Email", accessor: "email" },

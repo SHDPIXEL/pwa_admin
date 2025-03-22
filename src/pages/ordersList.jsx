@@ -33,10 +33,8 @@ const OrdersList = () => {
 
   // Table columns
   const columns = [
+    { header: "Product Name", accessor: "productName" },
     { header: "Order Id", accessor: "orderId" },
-    { header: "User Id", accessor: "userId" },
-    { header: "Transaction Id", accessor: "paymentId" },
-    { header: "Product Name", accessor: "productId" },
     // { header: "Payment Proof", accessor: "paymentScreenshot" },
     { header: "Quantity", accessor: "quantity" },
     // { header: "Email", accessor: "status" },

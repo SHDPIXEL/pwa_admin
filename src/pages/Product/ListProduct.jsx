@@ -158,7 +158,7 @@ const ListProduct = () => {
   const columns = [
     { header: "Name", accessor: "name" },
     { header: "Description", accessor: "description" },
-    { header: "Old Price", accessor: "oldPrice" },
+    { header: "Price", accessor: "oldPrice" },
     { header: "Doctor Offer Price", accessor: "priceForDoctor" },
     { header: "Patient Offer Price", accessor: "priceForOtherUser" },
     {

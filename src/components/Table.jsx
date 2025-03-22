@@ -210,6 +210,23 @@ const renderCellContent = (
     }
   }
 
+  if (column.accessor === "createdAt") {
+    const formattedDate = new Date(row.createdAt)
+      .toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      })
+      .replace("am", "AM")
+      .replace("pm", "PM"); // Ensures AM/PM is uppercase
+
+    return <div className="text-center text-gray-700">{formattedDate}</div>;
+  }
+
   // if (column.accessor === "mediaFiles" && Array.isArray(value)) {
   //   return (
   //     <div className="grid grid-cols-2 justify-center items-center text-center space-x-2 w-30">
@@ -234,34 +251,58 @@ const renderCellContent = (
 
   if (column.accessor === "mediaFiles" && value) {
     try {
-      // Parse the JSON-encoded array if needed
-      const parsedValue = JSON.parse(value);
+      let mediaArray;
 
-      // Ensure it's an array (some cases might return a string)
-      const mediaArray = Array.isArray(parsedValue)
-        ? parsedValue
-        : [parsedValue];
+      // Check if value is already an array or needs parsing
+      if (typeof value === "string") {
+        if (value.startsWith("[")) {
+          // If it's a valid JSON array string, parse it
+          mediaArray = JSON.parse(value);
+        } else {
+          // Otherwise, assume it's a single media file path
+          mediaArray = [value];
+        }
+      } else {
+        mediaArray = Array.isArray(value) ? value : [value];
+      }
 
-      if (row.mediaType === "images") {
+      // Sanitize paths: replace backslashes with forward slashes & trim spaces
+      const sanitizedMediaArray = mediaArray.map((item) =>
+        item.replace(/\\/g, "/").trim()
+      );
+
+      console.log("Sanitized media array:", sanitizedMediaArray);
+
+      if (row.mediaType === "image") {
         return (
-          <div className="flex">
-            {mediaArray.map((image, index) => (
-              <img
-                key={index}
-                src={`${BASE_URL}/${image.trim()}`}
-                alt={`Challenge-Form Image ${index + 1}`}
-                className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105"
-              />
-            ))}
+          <div className="flex space-x-2">
+            {sanitizedMediaArray.map((image, index) => {
+              const finalImageUrl = `${BASE_URL}/${image}`;
+              console.log("Final Image URL:", finalImageUrl);
+
+              return (
+                <img
+                  key={index}
+                  src={finalImageUrl}
+                  alt={`Challenge-Form Image ${index + 1}`}
+                  className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105 transition-transform"
+                  onError={(e) => {
+                    console.error("Image Load Error:", e.target.src);
+                    e.target.src = "/fallback-image.png"; // Optional: Set a fallback image
+                  }}
+                />
+              );
+            })}
           </div>
         );
-      } else if (row.mediaType === "video") {
+      } else if (row.mediaType === "video" && sanitizedMediaArray.length > 0) {
         return (
           <video
             key="video"
-            src={`${BASE_URL}/${mediaArray[0]}`} // Only one video
+            src={`${BASE_URL}/${sanitizedMediaArray[0]}`}
             controls
             className="w-24 h-24 rounded-md border border-gray-200"
+            onError={(e) => console.error("Video Load Error:", e.target.src)}
           />
         );
       }

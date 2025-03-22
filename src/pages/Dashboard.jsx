@@ -25,7 +25,7 @@ const Dashboard = () => {
   const [totalRedeems, setRedeems] = useState();
   const [soldItems, SetSoldItems] = useState();
   const [redeemGraph, SetRedeemGraph] = useState();
-  const [soldItemsGraph, SetSoldItemsGraph] = useState();
+  const [soldItemsGraph, setSoldItemsGraph] = useState([]); // ✅ Ensure it starts as an empty array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -138,20 +138,28 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await API.get("/admin/soldItemsGraph");
-  //       SetSoldItemsGraph(response.data.data);
-  //       setLoading(false);
-  //     } catch (err) {
-  //       console.error(err);
-  //       setError("Failed to fetch dashboard data.");
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await API.get("/admin/soldItemsGraph");
+        // console.log("Fetched Orders Data:", response.data.data); // Debugging Log
+
+        if (response.data.data && response.data.data.length > 0) {
+          setSoldItemsGraph(response.data.data);
+        } else {
+          console.warn("Received empty data");
+          setSoldItemsGraph([]); // Ensure state is always an array
+        }
+      } catch (err) {
+        console.error("Error fetching graph data:", err);
+        setError("Failed to fetch dashboard data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // useEffect(() => {
   //   const fetchBookingChartData = async () => {
@@ -212,7 +220,7 @@ const Dashboard = () => {
       icon: <Type className="w-5 h-5" />,
     },
     {
-      title: "Total Items Sold",
+      title: "Total Orders",
       value: soldItems,
       icon: <Type className="w-5 h-5" />,
     },
@@ -281,7 +289,7 @@ const Dashboard = () => {
               />
             </LineChart>
           </ResponsiveContainer>
-          <p className="font-bold text-gray-600 text-xl mt-2">Booking Trends</p>
+          <p className="font-bold text-gray-600 text-xl mt-2">Redeem Trends</p>
         </div>
         {/* Pie Chart */}
         <div className="h-80 flex flex-col items-center justify-center shadow-sm bg-white p-6 space-y-5">
@@ -313,42 +321,46 @@ const Dashboard = () => {
           </p>
         </div>
       </div>
-      {/* <div className="h-full flex mt-10 flex-col items-center justify-center shadow-sm bg-white p-6 space-y-5 mx-auto w-3/4">
-        <ResponsiveContainer>
-          <LineChart
-            data={soldItemsGraph}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-            <XAxis
-              dataKey="date"
-              tick={{ fill: "#333" }}
-              tickFormatter={(tick) => {
-                const date = new Date(tick);
-                return `${date.getDate()}-${
-                  date.getMonth() + 1
-                }-${date.getFullYear()}`;
-              }}
-            />
-            <YAxis tick={{ fill: "#333" }} />
-            <Tooltip
-              contentStyle={{ backgroundColor: "#ffffff" }}
-              itemStyle={{ color: "#333" }}
-            />
-            <Legend wrapperStyle={{ color: "#333" }} />
-            <Line
-              type="monotone"
-              dataKey="payments"
-              stroke="#00C49F"
-              strokeWidth={2}
-              activeDot={{ r: 10 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      <div className="h-[400px] flex flex-col mt-10 items-center justify-center shadow-md bg-white p-6 mx-auto w-2/4">
+        {soldItemsGraph.length > 0 ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart
+              data={soldItemsGraph}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis
+                dataKey="date"
+                tick={{ fill: "#333" }}
+                tickFormatter={(tick) => {
+                  const date = new Date(tick);
+                  return `${date.getDate()}-${
+                    date.getMonth() + 1
+                  }-${date.getFullYear()}`;
+                }}
+              />
+              <YAxis tick={{ fill: "#333" }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: "#ffffff" }}
+                itemStyle={{ color: "#333" }}
+              />
+              <Legend wrapperStyle={{ color: "#333" }} />
+              <Line
+                type="monotone"
+                dataKey="orders"
+                stroke="#00C49F"
+                strokeWidth={2}
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <p className="text-gray-500">No data available</p>
+        )}
         <p className="font-bold text-gray-600 text-xl text-center">
-          Booking Trends
+          Order Trends
         </p>
-      </div> */}
+      </div>
     </div>
   );
 };

@@ -14,6 +14,7 @@ const ListChallengeForm = () => {
     const fetchChallengeForms = async () => {
       try {
         const response = await API.get("/admin/challengeForms");
+        console.log(response.data)
         setChallengeForms(response.data);
       } catch (error) {
         console.error("Error fetching challenge forms:", error);
