@@ -340,12 +340,14 @@ const renderCellContent = (
   // Handle Invoices column
   if (column.accessor === "invoices") {
     return row.invoiceUrl ? (
-      <button
-        onClick={() => handleDownloadInvoice(row.invoiceUrl)}
+      <a
+        href={`${BASE_URL}${row.invoiceUrl}`}
+        target="_blank"
+        rel="noopener noreferrer"
         className="text-blue-500 hover:text-blue-700"
       >
-        <Download className="w-5 h-5" />
-      </button>
+        <Download className="w-5 h-5 inline-block" />
+      </a>
     ) : (
       <span className="text-gray-400">No Invoice</span>
     );

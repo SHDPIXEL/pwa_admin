@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import Table from "../components/Table";
-import { CheckCircle, XCircle } from "lucide-react";import API from "../lib/utils";
+import { CheckCircle, XCircle } from "lucide-react";
+import API from "../lib/utils";
 import { Toaster, toast } from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
 import { BASE_URL } from "../lib/utils";
@@ -77,19 +78,20 @@ const DoctorsList = () => {
     fetchChallengeForms();
   }, []);
 
-  // const handleDownloadInvoice = (invoiceUrl) => {
-  //   if (!invoiceUrl) {
-  //     toast.error("Invoice not available");
-  //     return;
-  //   }
+  // Function to download invoice
+  const handleDownloadInvoice = (invoiceUrl) => {
+    if (!invoiceUrl) {
+      toast.error("Invoice not available");
+      return;
+    }
 
-  //   const link = document.createElement("a");
-  //   link.href = invoiceUrl;
-  //   link.setAttribute("download", "invoice.pdf");
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // };
+    const link = document.createElement("a");
+    link.href = invoiceUrl;
+    link.setAttribute("download", "invoice.pdf");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Function to update payment status
   const updatePaymentStatus = async (paymentId, status) => {
@@ -106,12 +108,16 @@ const DoctorsList = () => {
       // Update state after successful API call
       setPayments((prevPayments) =>
         prevPayments.map((payment) =>
-          payment.id === paymentId ? { ...payment, paymentStatus: status } : payment
+          payment.id === paymentId
+            ? { ...payment, paymentStatus: status }
+            : payment
         )
       );
     } catch (error) {
       console.error("Error updating payment status:", error);
-      toast.error("Failed to update payment status.", { position: "top-right" });
+      toast.error("Failed to update payment status.", {
+        position: "top-right",
+      });
     }
   };
 
@@ -126,22 +132,23 @@ const DoctorsList = () => {
     // { header: "Email", accessor: "email" },
     { header: "Payment Status", accessor: "paymentStatus" },
     { header: "Status", accessor: "status" },
+    { header: "Status", accessor: "invoices" },
     // { header: "Invoices", accessor: "invoices" },
   ];
 
-    // Action buttons for status update
-    const actions = [
-      {
-        label: <CheckCircle className="w-4 h-4" />,
-        handler: (row) => updatePaymentStatus(row.id, "Verified"),
-        className: "text-green-500 hover:text-green-600",
-      },
-      {
-        label: <XCircle className="w-4 h-4" />,
-        handler: (row) => updatePaymentStatus(row.id, "Rejected"),
-        className: "text-red-500 hover:text-red-600",
-      },
-    ];
+  // Action buttons for status update
+  const actions = [
+    {
+      label: <CheckCircle className="w-4 h-4" />,
+      handler: (row) => updatePaymentStatus(row.id, "Verified"),
+      className: "text-green-500 hover:text-green-600",
+    },
+    {
+      label: <XCircle className="w-4 h-4" />,
+      handler: (row) => updatePaymentStatus(row.id, "Rejected"),
+      className: "text-red-500 hover:text-red-600",
+    },
+  ];
 
   return (
     <div className="p-6">
@@ -158,7 +165,7 @@ const DoctorsList = () => {
           columns={columns}
           data={payments}
           globalActions={actions}
-          // handleDownloadInvoice={handleDownloadInvoice}
+          handleDownloadInvoice={handleDownloadInvoice}
         />
       ) : (
         <div className="text-center text-gray-600 mt-10">No records found</div>
