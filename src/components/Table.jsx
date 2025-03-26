@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { BASE_URL } from "../lib/utils";
-import { Download } from "lucide-react";
+import { Download, ChevronLeft, ChevronRight } from "lucide-react";
 
 const validAccessors = ["images", "image", "product_image"];
 
@@ -11,8 +11,38 @@ const Table = ({
   toggleInStock,
   handleDownloadInvoice,
 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const itemsPerPage = 10;
+
+  // Filter data based on search term
+  const filteredData = data.filter((row) =>
+    columns.some((column) =>
+      row[column.accessor]
+        ?.toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+  );
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
   return (
     <div className="overflow-x-auto">
+      {/* Search Bar */}
+      <div className="mb-4 flex justify-between items-center">
+        <input
+          type="text"
+          placeholder="Search..."
+          className="p-2 border rounded-md w-1/3"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       <table className="min-w-full border-collapse border border-gray-200 bg-white shadow-md rounded-lg md:text-sm text-xs">
         {/* Table Header */}
         <thead>
@@ -35,7 +65,7 @@ const Table = ({
 
         {/* Table Body */}
         <tbody>
-          {data.map((row, rowIndex) => (
+          {paginatedData.map((row, rowIndex) => (
             <tr
               key={rowIndex}
               className={`hover:bg-gray-50 ${
@@ -88,6 +118,29 @@ const Table = ({
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      <div className="mt-4 flex justify-between items-center">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-300 rounded-md disabled:opacity-50 flex items-center gap-1"
+        >
+          <ChevronLeft className="w-4 h-4" /> Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-300 rounded-md disabled:opacity-50 flex items-center gap-1"
+        >
+          Next <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
 };
@@ -252,7 +305,7 @@ const renderCellContent = (
   if (column.accessor === "mediaFiles" && value) {
     try {
       let mediaArray;
-  
+
       if (typeof value === "string") {
         if (value.startsWith("[")) {
           mediaArray = JSON.parse(value);
@@ -262,30 +315,30 @@ const renderCellContent = (
       } else {
         mediaArray = Array.isArray(value) ? value : [value];
       }
-  
+
       const sanitizedMediaArray = mediaArray.map((item) =>
         item.replace(/\\/g, "/").trim()
       );
-  
+
       console.log("Sanitized media array:", sanitizedMediaArray);
-  
+
       if (row.mediaType === "image") {
         return (
           <div className="flex space-x-2">
             {sanitizedMediaArray.map((image, index) => {
               const finalImageUrl = `${BASE_URL}/${image}`;
               console.log("Final Image URL:", finalImageUrl);
-  
+
               return (
                 <img
                   key={index}
                   src={finalImageUrl}
                   alt={`Challenge-Form Image ${index + 1}`}
                   className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105 transition-transform"
-                  onError={(e) => {
-                    console.error("Image Load Error:", e.target.src);
-                    e.target.src = "/fallback-image.png"; // Fallback image
-                  }}
+                  // onError={(e) => {
+                  //   console.error("Image Load Error:", e.target.src);
+                  //   e.target.src = "/fallback-image.png"; // Fallback image
+                  // }}
                 />
               );
             })}
@@ -307,7 +360,6 @@ const renderCellContent = (
       return <p className="text-red-500">Invalid media format</p>;
     }
   }
-  
 
   // Handle tags
   if (column.accessor === "tags" && Array.isArray(value)) {
