@@ -252,34 +252,30 @@ const renderCellContent = (
   if (column.accessor === "mediaFiles" && value) {
     try {
       let mediaArray;
-
-      // Check if value is already an array or needs parsing
+  
       if (typeof value === "string") {
         if (value.startsWith("[")) {
-          // If it's a valid JSON array string, parse it
           mediaArray = JSON.parse(value);
         } else {
-          // Otherwise, assume it's a single media file path
           mediaArray = [value];
         }
       } else {
         mediaArray = Array.isArray(value) ? value : [value];
       }
-
-      // Sanitize paths: replace backslashes with forward slashes & trim spaces
+  
       const sanitizedMediaArray = mediaArray.map((item) =>
         item.replace(/\\/g, "/").trim()
       );
-
+  
       console.log("Sanitized media array:", sanitizedMediaArray);
-
+  
       if (row.mediaType === "image") {
         return (
           <div className="flex space-x-2">
             {sanitizedMediaArray.map((image, index) => {
               const finalImageUrl = `${BASE_URL}/${image}`;
               console.log("Final Image URL:", finalImageUrl);
-
+  
               return (
                 <img
                   key={index}
@@ -288,7 +284,7 @@ const renderCellContent = (
                   className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105 transition-transform"
                   onError={(e) => {
                     console.error("Image Load Error:", e.target.src);
-                    e.target.src = "/fallback-image.png"; // Optional: Set a fallback image
+                    e.target.src = "/fallback-image.png"; // Fallback image
                   }}
                 />
               );
@@ -311,6 +307,7 @@ const renderCellContent = (
       return <p className="text-red-500">Invalid media format</p>;
     }
   }
+  
 
   // Handle tags
   if (column.accessor === "tags" && Array.isArray(value)) {
