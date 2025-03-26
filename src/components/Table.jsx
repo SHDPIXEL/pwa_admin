@@ -43,7 +43,7 @@ const Table = ({
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-      <table className="min-w-full border-collapse border border-gray-200 bg-white shadow-md rounded-lg md:text-sm text-xs">
+      <table className="min-w-full border-collapse border border-gray-200 bg-white shadow-sm rounded-lg md:text-sm text-xs">
         {/* Table Header */}
         <thead>
           <tr className="bg-gray-100 text-left text-gray-600 font-semibold uppercase tracking-wider">
@@ -126,7 +126,7 @@ const Table = ({
           disabled={currentPage === 1}
           className="px-3 py-1 bg-gray-300 rounded-md disabled:opacity-50 flex items-center gap-1"
         >
-          <ChevronLeft className="w-4 h-4" /> Previous
+          <ChevronLeft className="w-4 h-4" />
         </button>
         <span>
           Page {currentPage} of {totalPages}
@@ -138,7 +138,7 @@ const Table = ({
           disabled={currentPage === totalPages}
           className="px-3 py-1 bg-gray-300 rounded-md disabled:opacity-50 flex items-center gap-1"
         >
-          Next <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>
