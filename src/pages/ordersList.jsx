@@ -15,8 +15,7 @@ const OrdersList = () => {
     const fetchChallengeForms = async () => {
       try {
         const response = await API.get("/admin/getOrders");
-        console.log("Fetched Payments:", response.data);
-
+        console.log("Fetched Orders Data:", response.data);
         setOrders(response.data.orders);
       } catch (error) {
         console.error("Error fetching payment invoices:", error);
@@ -29,16 +28,10 @@ const OrdersList = () => {
     fetchChallengeForms();
   }, []);
 
-
-
-  // Table columns
   const columns = [
     { header: "Product Name", accessor: "productName" },
     { header: "Order Id", accessor: "orderId" },
-    // { header: "Payment Proof", accessor: "paymentScreenshot" },
     { header: "Quantity", accessor: "quantity" },
-    // { header: "Email", accessor: "status" },
-    // { header: "Payment Status", accessor: "paymentStatus" },
     { header: "Status", accessor: "status" },
     { header: "Order Date", accessor: "createdAt" },
   ];
@@ -54,9 +47,7 @@ const OrdersList = () => {
         Order's Invoice List
       </h1>
       {orders.length > 0 ? (
-        <Table
-          columns={columns}
-          data={orders}        />
+        <Table columns={columns} data={orders} />
       ) : (
         <div className="text-center text-gray-600 mt-10">No records found</div>
       )}

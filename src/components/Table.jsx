@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BASE_URL } from "../lib/utils";
-import { Download, ChevronLeft, ChevronRight } from "lucide-react";
+import { Download, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 
 const validAccessors = ["images", "image", "product_image"];
 
@@ -13,9 +13,9 @@ const Table = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [expandedRows, setExpandedRows] = useState([]);
   const itemsPerPage = 10;
 
-  // Filter data based on search term
   const filteredData = data.filter((row) =>
     columns.some((column) =>
       row[column.accessor]
@@ -25,15 +25,22 @@ const Table = ({
     )
   );
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const toggleRow = (rowIndex) => {
+    setExpandedRows((prev) =>
+      prev.includes(rowIndex)
+        ? prev.filter((i) => i !== rowIndex)
+        : [...prev, rowIndex]
+    );
+  };
+
   return (
     <div className="overflow-x-auto">
-      {/* Search Bar */}
       <div className="mb-4 flex justify-between items-center">
         <input
           type="text"
@@ -44,82 +51,90 @@ const Table = ({
         />
       </div>
       <table className="min-w-full border-collapse border border-gray-200 bg-white shadow-sm rounded-lg md:text-sm text-xs">
-        {/* Table Header */}
         <thead>
           <tr className="bg-gray-100 text-left text-gray-600 font-semibold uppercase tracking-wider">
+            <th className="px-3 py-3 border-b text-center border-gray-200 w-10"></th> {/* Add this */}
             {columns.map((column, index) => (
-              <th
-                key={index}
-                className="px-6 py-3 text-center border-b border-gray-200"
-              >
+              <th key={index} className="px-6 py-3 text-center border-b border-gray-200">
                 {column.header}
               </th>
             ))}
             {globalActions && (
-              <th className="px-6 py-3 border-b text-center border-gray-200">
-                Actions
-              </th>
+              <th className="px-6 py-3 border-b text-center border-gray-200">Actions</th>
             )}
           </tr>
         </thead>
 
-        {/* Table Body */}
         <tbody>
           {paginatedData.map((row, rowIndex) => (
-            <tr
-              key={rowIndex}
-              className={`hover:bg-gray-50 ${
-                rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"
-              }`}
-            >
-              {columns.map((column, colIndex) => (
-                <td
-                  key={colIndex}
-                  className="px-6 py-4 border-b text-center border-gray-200 text-gray-700"
-                >
-                  {renderCellContent(
-                    column,
-                    row,
-                    toggleInStock,
-                    handleDownloadInvoice
-                  )}
-                </td>
-              ))}
-
-              {globalActions && (
-                <td className="px-6 py-4 border-b border-gray-200 text-gray-700 text-center">
-                  {row.paymentStatus === "Verified" ? (
-                    <span>--</span>
+            <React.Fragment key={rowIndex}>
+              <tr
+                onClick={() => toggleRow(rowIndex)}
+                className={`hover:bg-gray-50 cursor-pointer ${rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"
+                  }`}
+              >
+                {/* Add this new <td> for the arrow */}
+                <td className="px-3 py-4 border-b text-center border-gray-200">
+                  {expandedRows.includes(rowIndex) ? (
+                    <ChevronUp className="w-5 h-5 text-gray-600 cursor-pointer" />
                   ) : (
-                    <div className="inline-flex gap-2">
-                      {globalActions.map((action, actionIndex) => (
-                        <button
-                          key={actionIndex}
-                          onClick={() => action.handler(row)}
-                          disabled={
-                            row.isVerified === 1 || row.isVerified === 2
-                          } // Disable button for Approved & Rejected
-                          className={`px-3 py-1 text-sm rounded-md ${
-                            action.className
-                          } ${
-                            row.isVerified === true || row.isVerified === 2
-                              ? "opacity-0 cursor-not-allowed"
-                              : ""
-                          }`}
-                        >
-                          {action.label}
-                        </button>
-                      ))}
-                    </div>
+                    <ChevronDown className="w-5 h-5 text-gray-600 cursor-pointer" />
                   )}
                 </td>
+
+                {columns.map((column, colIndex) => (
+                  <td key={colIndex} className="px-6 py-4 border-b text-center border-gray-200 text-gray-700">
+                    {renderCellContent(column, row, toggleInStock, handleDownloadInvoice)}
+                  </td>
+                ))}
+
+                {globalActions && (
+                  <td className="px-6 py-4 border-b border-gray-200 text-gray-700 text-center">
+                    {row.paymentStatus === "Verified" ? (
+                      <span>--</span>
+                    ) : (
+                      <div className="inline-flex gap-2">
+                        {globalActions.map((action, actionIndex) => (
+                          <button
+                            key={actionIndex}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              action.handler(row);
+                            }}
+                            disabled={
+                              row.isVerified === 1 || row.isVerified === 2
+                            }
+                            className={`px-3 py-1 text-sm rounded-md ${action.className
+                              } ${row.isVerified === true || row.isVerified === 2
+                                ? "opacity-0 cursor-not-allowed"
+                                : ""
+                              }`}
+                          >
+                            {action.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </td>
+                )}
+              </tr>
+              {expandedRows.includes(rowIndex) && (
+                <tr className="bg-gray-100">
+                  <td colSpan={columns.length + (globalActions ? 2 : 1)} className="p-4"> {/* Update colSpan */}
+                    <div className="text-gray-700">
+                      <p><strong>Name:</strong> {row?.userName || "N/A"}</p>
+                      <p><strong>Phone:</strong> {row?.userPhone || "N/A"}</p>
+                      <p><strong>Email:</strong> {row.userPhone || "N/A"}</p>
+                      <p><strong>Delivery Address:</strong> {row.address || "N/A"}</p>
+                    </div>
+                  </td>
+                </tr>
+
               )}
-            </tr>
+            </React.Fragment>
           ))}
         </tbody>
       </table>
-
-      {/* Pagination Controls */}
       <div className="mt-4 flex justify-between items-center">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -145,7 +160,7 @@ const Table = ({
   );
 };
 
-// Helper function to render cell content based on column type
+// Helper function to render cell content based on column type (unchanged)
 const renderCellContent = (
   column,
   row,
@@ -154,7 +169,6 @@ const renderCellContent = (
 ) => {
   const value = row[column.accessor];
 
-  // Render checkbox for inStock column
   if (column.accessor === "inStock") {
     return (
       <div className="flex justify-center">
@@ -187,17 +201,11 @@ const renderCellContent = (
 
   if (column.accessor === "reward_image" && value) {
     try {
-      // Parse the array string into an actual array
       const parsedArray = JSON.parse(value);
-
-      // Ensure it's an array and get the first item
       const cleanedValue = Array.isArray(parsedArray)
         ? parsedArray[0].replace(/^"|"$/g, "")
         : "";
-
-      // Construct the correct image URL
       const imageUrl = `${BASE_URL}/${cleanedValue}`;
-
       return (
         <img
           key="1"
@@ -208,7 +216,7 @@ const renderCellContent = (
       );
     } catch (error) {
       console.error("Invalid image data:", value, error);
-      return null; // Return nothing if parsing fails
+      return null;
     }
   }
 
@@ -216,11 +224,10 @@ const renderCellContent = (
     return (
       <div className="grid grid-cols-2 justify-center items-center text-center space-x-2 w-30">
         {value
-          .filter((imgSrc) => imgSrc) // ✅ Remove null/undefined values
+          .filter((imgSrc) => imgSrc)
           .map((imgSrc, index) => {
-            const cleanedValue = imgSrc ? imgSrc.replace(/^"|"$/g, "") : ""; // ✅ Prevent null errors
+            const cleanedValue = imgSrc ? imgSrc.replace(/^"|"$/g, "") : "";
             const imageUrl = `${BASE_URL}/${cleanedValue}`;
-
             return (
               <img
                 key={index}
@@ -236,16 +243,12 @@ const renderCellContent = (
 
   if (column.accessor === "paymentScreenshot" && value) {
     try {
-      // Ensure value is a string and clean it if necessary
       const cleanedValue =
         typeof value === "string" ? value.replace(/^"|"$/g, "").trim() : "";
-
       if (!cleanedValue) {
         return <p className="text-gray-500">No proof available</p>;
       }
-
       const imageUrl = `${BASE_URL}/${cleanedValue}`;
-
       return (
         <div className="flex justify-center items-center">
           <a href={imageUrl} target="_blank" rel="noopener noreferrer">
@@ -275,70 +278,33 @@ const renderCellContent = (
         hour12: true,
       })
       .replace("am", "AM")
-      .replace("pm", "PM"); // Ensures AM/PM is uppercase
-
+      .replace("pm", "PM");
     return <div className="text-center text-gray-700">{formattedDate}</div>;
   }
 
-  // if (column.accessor === "mediaFiles" && Array.isArray(value)) {
-  //   return (
-  //     <div className="grid grid-cols-2 justify-center items-center text-center space-x-2 w-30">
-  //       {value
-  //         .filter((imgSrc) => imgSrc) // ✅ Remove null/undefined values
-  //         .map((imgSrc, index) => {
-  //           const cleanedValue = imgSrc ? imgSrc.replace(/^"|"$/g, "") : ""; // ✅ Prevent null errors
-  //           const imageUrl = `${BASE_URL}/${cleanedValue}`;
-
-  //           return (
-  //             <img
-  //               key={index}
-  //               src={imageUrl}
-  //               alt={`Challenge Image ${index + 1}`}
-  //               className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105"
-  //             />
-  //           );
-  //         })}
-  //     </div>
-  //   );
-  // }
-
   if (column.accessor === "mediaFiles" && value) {
     try {
-      let mediaArray;
-
-      if (typeof value === "string") {
-        if (value.startsWith("[")) {
-          mediaArray = JSON.parse(value);
-        } else {
-          mediaArray = [value];
-        }
-      } else {
-        mediaArray = Array.isArray(value) ? value : [value];
-      }
-
+      let mediaArray =
+        typeof value === "string" && value.startsWith("[ W")
+          ? JSON.parse(value)
+          : Array.isArray(value)
+            ? value
+            : [value];
       const sanitizedMediaArray = mediaArray.map((item) =>
         item.replace(/\\/g, "/").trim()
       );
-
-      console.log("Sanitized media array:", sanitizedMediaArray);
 
       if (row.mediaType === "image") {
         return (
           <div className="flex space-x-2">
             {sanitizedMediaArray.map((image, index) => {
               const finalImageUrl = `${BASE_URL}/${image}`;
-              console.log("Final Image URL:", finalImageUrl);
-
               return (
                 <img
                   key={index}
                   src={finalImageUrl}
                   alt={`Challenge-Form Image ${index + 1}`}
                   className="w-12 h-12 object-cover rounded-md border border-gray-200 hover:scale-105 transition-transform"
-                  // onError={(e) => {
-                  //   console.error("Image Load Error:", e.target.src);
-                  //   e.target.src = "/fallback-image.png"; // Fallback image
-                  // }}
                 />
               );
             })}
@@ -361,7 +327,6 @@ const renderCellContent = (
     }
   }
 
-  // Handle tags
   if (column.accessor === "tags" && Array.isArray(value)) {
     return (
       <div className="flex flex-wrap gap-2">
@@ -377,7 +342,6 @@ const renderCellContent = (
     );
   }
 
-  // Handle Status column
   if (column.accessor === "isVerified") {
     if (value === true)
       return <span className="text-green-500 font-semibold">Approved</span>;
@@ -386,7 +350,6 @@ const renderCellContent = (
     return <span className="text-yellow-500 font-semibold">Pending</span>;
   }
 
-  // Handle Invoices column
   if (column.accessor === "invoices") {
     return row.invoiceUrl ? (
       <a
@@ -402,7 +365,6 @@ const renderCellContent = (
     );
   }
 
-  // Handle images
   if (validAccessors.includes(column.accessor) && value) {
     return (
       <img
@@ -413,7 +375,6 @@ const renderCellContent = (
     );
   }
 
-  // Handle descriptions
   if (column.accessor === "description") {
     return (
       <p className="text-gray-600 text-sm truncate max-w-xs" title={value}>
@@ -422,7 +383,6 @@ const renderCellContent = (
     );
   }
 
-  // Default rendering for other columns
   return typeof value === "function" ? value(row) : value;
 };
 
