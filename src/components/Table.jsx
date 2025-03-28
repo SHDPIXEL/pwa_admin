@@ -183,7 +183,7 @@ const Table = ({
           <ChevronLeft className="w-4 h-4" />
         </button>
         <span>
-          Page {currentPage} of {totalPages}
+          Page {currentPage} of {totalPages} ({sortedData.length} records)
         </span>
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
