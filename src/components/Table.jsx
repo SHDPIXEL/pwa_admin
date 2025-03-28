@@ -162,9 +162,10 @@ const Table = ({
                 <tr className="bg-gray-100">
                   <td colSpan={columns.length + (globalActions ? 1 : 0) + (window.location.pathname === "/ordersList" ? 1 : 0)} className="p-4">
                     <div className="text-gray-700">
-                      <p><strong>Name:</strong> {row?.userName || "N/A"}</p>
+                      {/* <p><strong>Name:</strong> {row?.userName || "N/A"}</p> */}
                       <p><strong>Phone:</strong> {row?.userPhone || "N/A"}</p>
                       <p><strong>Email:</strong> {row?.userEmail || "N/A"}</p>
+                      {/* <p><strong>State:</strong> {row?.userState || "N/A"}</p> */}
                       <p><strong>Delivery Address:</strong> {row.address || "N/A"}</p>
                     </div>
                   </td>

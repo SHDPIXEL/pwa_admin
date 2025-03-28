@@ -139,22 +139,34 @@ const ListRewards = () => {
   // Table actions
   const actions = [
     {
-      label: <SquarePen className="w-4 h-4" />,
-      handler: (row) =>
-        navigate("/rewards/add", { state: { rewardData: row } }),
-      className: "text-green-500 hover:text-green-600",
+      label: (
+        <span className="flex items-center gap-1 text-green-500 hover:text-green-600">
+          <SquarePen className="w-4 h-4" />
+          Edit
+        </span>
+      ),
+      handler: (row) => navigate("/rewards/add", { state: { rewardData: row } }),
     },
     {
-      label: <Trash2 className="w-4 h-4" />,
+      label: (
+        <span className="flex items-center gap-1 text-red-500 hover:text-red-600">
+          <Trash2 className="w-4 h-4" />
+          Delete
+        </span>
+      ),
       handler: (row) => deleteReward(row.id),
-      className: "text-red-500 hover:text-red-600",
     },
     {
-      label: <RefreshCcw className="w-4 h-4" />,
+      label: (
+        <span className="flex items-center gap-1 text-blue-500 hover:text-blue-600">
+          <RefreshCcw className="w-4 h-4" />
+          Change Status
+        </span>
+      ),
       handler: (row) => updateStatus(row),
-      className: "text-blue-500 hover:text-blue-600",
     },
   ];
+
 
   return (
     <div className="p-6">

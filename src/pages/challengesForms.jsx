@@ -114,7 +114,7 @@ const ListChallengeForm = () => {
 
   // Table columns
   const columns = [
-    { header: "Title", accessor: "name" },
+    { header: "Name", accessor: "name" },
     { header: "Media-Type", accessor: "mediaType" },
     { header: "Media-Files", accessor: "mediaFiles" },
     { header: "Status", accessor: "isVerified" },
@@ -123,16 +123,25 @@ const ListChallengeForm = () => {
   // Table actions
   const actions = [
     {
-      label: <CheckCircle className="w-4 h-4" />,
+      label: (
+        <span className="flex items-center gap-1 text-green-500 hover:text-green-600">
+          <CheckCircle className="w-4 h-4" />
+          Approve
+        </span>
+      ),
       handler: (row) => approveChallenge(row.id),
-      className: "text-green-500 hover:text-green-600",
     },
-        {
-        label: <XCircle className="w-4 h-4" />,
-        handler: (row) => rejectChallenge(row.id),
-        className: "text-blue-500 hover:text-blue-600",
-        },
+    {
+      label: (
+        <span className="flex items-center gap-1 text-blue-500 hover:text-blue-600">
+          <XCircle className="w-4 h-4" />
+          Reject
+        </span>
+      ),
+      handler: (row) => rejectChallenge(row.id),
+    },
   ];
+  
 
   return (
     <div className="p-6">

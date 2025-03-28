@@ -29,11 +29,14 @@ const OrdersList = () => {
   }, []);
 
   const columns = [
-    { header: "Product Name", accessor: "productName" },
+    { header: "Name", accessor: "userName" },
+    { header: "State", accessor: "userState" },
     { header: "Order Id", accessor: "orderId" },
     { header: "Quantity", accessor: "quantity" },
     { header: "Status", accessor: "status" },
     { header: "Order Date", accessor: "createdAt" },
+    { header: "Status", accessor: "status" },
+
   ];
 
   return (

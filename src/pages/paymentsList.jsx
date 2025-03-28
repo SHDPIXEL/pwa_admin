@@ -139,16 +139,25 @@ const DoctorsList = () => {
   // Action buttons for status update
   const actions = [
     {
-      label: <CheckCircle className="w-4 h-4" />,
+      label: (
+        <span className="flex items-center gap-1 text-green-500 hover:text-green-600">
+          <CheckCircle className="w-4 h-4" />
+          Approve
+        </span>
+      ),
       handler: (row) => updatePaymentStatus(row.id, "Verified"),
-      className: "text-green-500 hover:text-green-600",
     },
     {
-      label: <XCircle className="w-4 h-4" />,
+      label: (
+        <span className="flex items-center gap-1 text-red-500 hover:text-red-600">
+          <XCircle className="w-4 h-4" />
+          Disapprove
+        </span>
+      ),
       handler: (row) => updatePaymentStatus(row.id, "Rejected"),
-      className: "text-red-500 hover:text-red-600",
     },
   ];
+  
 
   return (
     <div className="p-6">

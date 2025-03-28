@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Card from "../components/Card";
-import { Users, Swords, Type, Stethoscope } from "lucide-react";
+import { Users, Swords, Type, Stethoscope, Download, Package } from "lucide-react";
 import API from "../lib/utils";
 import {
   PieChart,
@@ -17,6 +17,7 @@ import {
 } from "recharts";
 import renderActiveShape from "../components/pieChart";
 import { Helmet } from "react-helmet-async";
+import * as XLSX from "xlsx";
 
 const Dashboard = () => {
   const [doctorData, setDoctorsData] = useState();
@@ -30,6 +31,7 @@ const Dashboard = () => {
   const [error, setError] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [bookingChartData, setBookingChartData] = useState();
+  const [excelData, setExcelData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -161,6 +163,34 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchExceldata = async () => {
+      try {
+        const response = await API.get("/admin/excel_data");
+        console.log("Excel data", response.data)
+        setExcelData(response.data)
+      } catch (error) {
+        console.error("Error in fetching excel data", error)
+      }
+    }
+    fetchExceldata()
+  }, [])
+
+  const downloadExcel = () => {
+    if (excelData.length === 0) {
+      alert("No data available to download");
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "ExcelData");
+
+    // Generate Excel file and trigger download
+    XLSX.writeFile(workbook, "ExcelData.xlsx");
+  };
+
+
   // useEffect(() => {
   //   const fetchBookingChartData = async () => {
   //     const response = await API.get("admin/booking-details/graph");
@@ -222,7 +252,7 @@ const Dashboard = () => {
     {
       title: "Total Orders",
       value: soldItems,
-      icon: <Type className="w-5 h-5" />,
+      icon: <Package className="w-5 h-5" />
     },
   ];
 
@@ -253,6 +283,16 @@ const Dashboard = () => {
         ))}
       </div>
 
+      <div className="flex justify-start mx-6 mt-4">
+        <button
+          onClick={downloadExcel}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+        >
+          <Download className="w-4 h-4" />
+          Download Order Excel
+        </button>
+      </div>
+
       {/* Charts Section */}
       <div className="grid items-center justify-center grid-cols-1 md:grid-cols-2 gap-8 mt-10 px-6">
         <div className="h-80 flex flex-col items-center justify-center shadow-sm bg-white p-6 space-y-5">
@@ -267,9 +307,8 @@ const Dashboard = () => {
                 tick={{ fill: "#333" }}
                 tickFormatter={(tick) => {
                   const date = new Date(tick);
-                  return `${date.getDate()}-${
-                    date.getMonth() + 1
-                  }-${date.getFullYear()}`;
+                  return `${date.getDate()}-${date.getMonth() + 1
+                    }-${date.getFullYear()}`;
                 }}
               />
               <YAxis tick={{ fill: "#333" }} />
@@ -334,9 +373,8 @@ const Dashboard = () => {
                 tick={{ fill: "#333" }}
                 tickFormatter={(tick) => {
                   const date = new Date(tick);
-                  return `${date.getDate()}-${
-                    date.getMonth() + 1
-                  }-${date.getFullYear()}`;
+                  return `${date.getDate()}-${date.getMonth() + 1
+                    }-${date.getFullYear()}`;
                 }}
               />
               <YAxis tick={{ fill: "#333" }} />
