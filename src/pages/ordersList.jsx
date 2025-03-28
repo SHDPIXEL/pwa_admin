@@ -16,7 +16,7 @@ const OrdersList = () => {
       try {
         const response = await API.get("/admin/getOrders");
         console.log("Fetched Orders Data:", response.data);
-        setOrders(response.data.orders);
+        setOrders(response.data.orders.reverse());
       } catch (error) {
         console.error("Error fetching payment invoices:", error);
         toast.error("No payment invoices found.", {

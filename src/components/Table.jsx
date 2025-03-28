@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BASE_URL } from "../lib/utils";
-import { Download, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { Download, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ArrowUpDown } from "lucide-react";
 
 const validAccessors = ["images", "image", "product_image"];
 
@@ -14,7 +14,40 @@ const Table = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedRows, setExpandedRows] = useState([]);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const itemsPerPage = 10;
+
+  // Sorting function
+  const sortData = (dataToSort) => {
+    if (!sortConfig.key) return dataToSort;
+
+    return [...dataToSort].sort((a, b) => {
+      const valueA = a[sortConfig.key];
+      const valueB = b[sortConfig.key];
+
+      // Handle different data types
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        return sortConfig.direction === 'asc'
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      }
+      
+      // Handle numbers and other types
+      return sortConfig.direction === 'asc'
+        ? (valueA < valueB ? -1 : 1)
+        : (valueB < valueA ? -1 : 1);
+    });
+  };
+
+  const handleSort = (key) => {
+    setSortConfig((prevConfig) => ({
+      key,
+      direction:
+        prevConfig.key === key && prevConfig.direction === 'asc'
+          ? 'desc'
+          : 'asc',
+    }));
+  };
 
   const filteredData = data.filter((row) =>
     columns.some((column) =>
@@ -25,8 +58,9 @@ const Table = ({
     )
   );
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const paginatedData = filteredData.slice(
+  const sortedData = sortData(filteredData);
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+  const paginatedData = sortedData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -53,10 +87,25 @@ const Table = ({
       <table className="min-w-full border-collapse border border-gray-200 bg-white shadow-sm rounded-lg md:text-sm text-xs">
         <thead>
           <tr className="bg-gray-100 text-left text-gray-600 font-semibold uppercase tracking-wider">
-            <th className="px-3 py-3 border-b text-center border-gray-200 w-10"></th> {/* Add this */}
+            {window.location.pathname === "/ordersList" && (
+              <th className="px-3 py-3 border-b text-center border-gray-200 w-10"></th>
+            )}
             {columns.map((column, index) => (
-              <th key={index} className="px-6 py-3 text-center border-b border-gray-200">
-                {column.header}
+              <th
+                key={index}
+                className="px-6 py-3 text-center border-b border-gray-200 cursor-pointer hover:bg-gray-200"
+                onClick={() => handleSort(column.accessor)}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  {column.header}
+                  {sortConfig.key === column.accessor ? (
+                    sortConfig.direction === 'asc' ? 
+                      <ChevronUp className="w-4 h-4" /> : 
+                      <ChevronDown className="w-4 h-4" />
+                  ) : (
+                    <ArrowUpDown className="w-4 h-4 text-gray-400" />
+                  )}
+                </div>
               </th>
             ))}
             {globalActions && (
@@ -64,30 +113,27 @@ const Table = ({
             )}
           </tr>
         </thead>
-
         <tbody>
           {paginatedData.map((row, rowIndex) => (
             <React.Fragment key={rowIndex}>
               <tr
                 onClick={() => toggleRow(rowIndex)}
-                className={`hover:bg-gray-50 cursor-pointer ${rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"
-                  }`}
+                className={`hover:bg-gray-50 cursor-pointer ${rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
               >
-                {/* Add this new <td> for the arrow */}
-                <td className="px-3 py-4 border-b text-center border-gray-200">
-                  {expandedRows.includes(rowIndex) ? (
-                    <ChevronUp className="w-5 h-5 text-gray-600 cursor-pointer" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-600 cursor-pointer" />
-                  )}
-                </td>
-
+                {window.location.pathname === "/ordersList" && (
+                  <td className="px-3 py-4 border-b text-center border-gray-200">
+                    {expandedRows.includes(rowIndex) ? (
+                      <ChevronUp className="w-5 h-5 text-gray-600 cursor-pointer" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-gray-600 cursor-pointer" />
+                    )}
+                  </td>
+                )}
                 {columns.map((column, colIndex) => (
                   <td key={colIndex} className="px-6 py-4 border-b text-center border-gray-200 text-gray-700">
                     {renderCellContent(column, row, toggleInStock, handleDownloadInvoice)}
                   </td>
                 ))}
-
                 {globalActions && (
                   <td className="px-6 py-4 border-b border-gray-200 text-gray-700 text-center">
                     {row.paymentStatus === "Verified" ? (
@@ -101,14 +147,8 @@ const Table = ({
                               e.stopPropagation();
                               action.handler(row);
                             }}
-                            disabled={
-                              row.isVerified === 1 || row.isVerified === 2
-                            }
-                            className={`px-3 py-1 text-sm rounded-md ${action.className
-                              } ${row.isVerified === true || row.isVerified === 2
-                                ? "opacity-0 cursor-not-allowed"
-                                : ""
-                              }`}
+                            disabled={row.isVerified === 1 || row.isVerified === 2}
+                            className={`px-3 py-1 text-sm rounded-md ${action.className} ${row.isVerified === true || row.isVerified === 2 ? "opacity-0 cursor-not-allowed" : ""}`}
                           >
                             {action.label}
                           </button>
@@ -118,18 +158,17 @@ const Table = ({
                   </td>
                 )}
               </tr>
-              {expandedRows.includes(rowIndex) && (
+              {expandedRows.includes(rowIndex) && window.location.pathname === "/ordersList" && (
                 <tr className="bg-gray-100">
-                  <td colSpan={columns.length + (globalActions ? 2 : 1)} className="p-4"> {/* Update colSpan */}
+                  <td colSpan={columns.length + (globalActions ? 1 : 0) + (window.location.pathname === "/ordersList" ? 1 : 0)} className="p-4">
                     <div className="text-gray-700">
                       <p><strong>Name:</strong> {row?.userName || "N/A"}</p>
                       <p><strong>Phone:</strong> {row?.userPhone || "N/A"}</p>
-                      <p><strong>Email:</strong> {row.userPhone || "N/A"}</p>
+                      <p><strong>Email:</strong> {row?.userEmail || "N/A"}</p>
                       <p><strong>Delivery Address:</strong> {row.address || "N/A"}</p>
                     </div>
                   </td>
                 </tr>
-
               )}
             </React.Fragment>
           ))}
@@ -147,9 +186,7 @@ const Table = ({
           Page {currentPage} of {totalPages}
         </span>
         <button
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
           className="px-3 py-1 bg-gray-300 rounded-md disabled:opacity-50 flex items-center gap-1"
         >
@@ -160,7 +197,6 @@ const Table = ({
   );
 };
 
-// Helper function to render cell content based on column type (unchanged)
 const renderCellContent = (
   column,
   row,
@@ -386,4 +422,4 @@ const renderCellContent = (
   return typeof value === "function" ? value(row) : value;
 };
 
-export default Table;
+export default Table; 
