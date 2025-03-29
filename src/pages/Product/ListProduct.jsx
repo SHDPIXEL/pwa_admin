@@ -16,7 +16,7 @@ const ListProduct = () => {
       try {
         const response = await API.get("/admin/products"); // Adjust endpoint as needed
         console.log(response.data);
-        setProducts(response.data);
+        setProducts(response.data.reverse());
       } catch (error) {
         console.error("Error fetching products:", error);
         toast.error("Failed to fetch products.", { position: "top-right" });

@@ -163,31 +163,26 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchExceldata = async () => {
-      try {
-        const response = await API.get("/admin/excel_data");
-        console.log("Excel data", response.data)
-        setExcelData(response.data)
-      } catch (error) {
-        console.error("Error in fetching excel data", error)
+
+  const downloadExcel = async () => {
+    try {
+      const response = await API.get("/admin/excel_data");
+      console.log("Excel data", response.data);
+
+      if (!response.data || response.data.length === 0) {
+        alert("No data available to download");
+        return;
       }
+
+      const worksheet = XLSX.utils.json_to_sheet(response.data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "ExcelData");
+
+      // Generate Excel file and trigger download
+      XLSX.writeFile(workbook, "ExcelData.xlsx");
+    } catch (error) {
+      console.error("Error in fetching and downloading Excel data", error);
     }
-    fetchExceldata()
-  }, [])
-
-  const downloadExcel = () => {
-    if (excelData.length === 0) {
-      alert("No data available to download");
-      return;
-    }
-
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "ExcelData");
-
-    // Generate Excel file and trigger download
-    XLSX.writeFile(workbook, "ExcelData.xlsx");
   };
 
 

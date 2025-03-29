@@ -15,7 +15,7 @@ const PatientList = () => {
       try {
         const response = await API.get("/admin/users");
         console.log(response.data.users)
-        const parsedata = response.data.users;
+        const parsedata = response.data.users.reverse();
         const patient = parsedata.filter(
             (user) => user.userType === "OtherUser"
           );

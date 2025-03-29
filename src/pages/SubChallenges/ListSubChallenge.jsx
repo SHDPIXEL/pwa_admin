@@ -69,7 +69,7 @@ const ListSubChallenge = () => {
         );
 
         // Set state with updated challenges
-        setChallenges(challengesWithWeekNames);
+        setChallenges(challengesWithWeekNames.reverse());
       } catch (error) {
         console.error("Error fetching challenges:", error);
         toast.error("Failed to fetch challenges.", { position: "top-right" });

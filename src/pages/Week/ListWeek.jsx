@@ -16,7 +16,7 @@ const ListWeek = () => {
       try {
         const response = await API.get("/admin/week");
         console.log(response.data);
-        setWeeks(response.data);
+        setWeeks(response.data.reverse());
       } catch (error) {
         console.error("Error fetching challenges:", error);
         toast.error("Failed to fetch challenges.", { position: "top-right" });

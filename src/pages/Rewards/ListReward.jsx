@@ -16,7 +16,7 @@ const ListRewards = () => {
       try {
         const response = await API.get("/admin/rewards"); // Adjust endpoint as needed
         console.log(response.data.rewards);
-        setRewards(response.data.rewards);
+        setRewards(response.data.rewards.reverse());
       } catch (error) {
         console.error("Error fetching rewards:", error);
         toast.error("Failed to fetch rewards.", { position: "top-right" });
