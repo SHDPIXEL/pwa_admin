@@ -16,7 +16,25 @@ const OrdersList = () => {
       try {
         const response = await API.get("/admin/getOrders");
         console.log("Fetched Orders Data:", response.data);
-        setOrders(response.data.orders.reverse());
+
+        // Ensure address is formatted in frontend (if needed)
+        const formattedOrders = response.data.orders.map((order) => ({
+          ...order,
+          address:
+            typeof order.address === "string"
+              ? order.address // Use as is if backend is fixed
+              : [
+                  order.address?.address || "",
+                  order.address?.city || "",
+                  order.address?.state || "",
+                  order.address?.pincode || "",
+                  order.address?.landMark || "",
+                ]
+                  .filter(Boolean)
+                  .join(", "),
+        }));
+
+        setOrders(formattedOrders.reverse());
       } catch (error) {
         console.error("Error fetching payment invoices:", error);
         toast.error("No payment invoices found.", {
@@ -36,7 +54,6 @@ const OrdersList = () => {
     { header: "Status", accessor: "status" },
     { header: "Order Date", accessor: "createdAt" },
     { header: "Status", accessor: "status" },
-
   ];
 
   return (

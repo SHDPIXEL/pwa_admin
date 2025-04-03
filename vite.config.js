@@ -11,5 +11,8 @@ export default defineConfig({
   server:{
     host: '0.0.0.0',  // Exposes the server to the local network
     port: 3000,  // Optional: set a custom port
-  }
+  },
+  optimizeDeps: {
+    include: ["xlsx"],
+  },
 })

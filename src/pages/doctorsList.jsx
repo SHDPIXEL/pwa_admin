@@ -33,6 +33,7 @@ const DoctorsList = () => {
 
   // Table columns
   const columns = [
+    { header: "Refferal Code", accessor: "code" },
     { header: "Name", accessor: "name" },
     { header: "Phone-Number", accessor: "phone" },
     { header: "Email", accessor: "email" },

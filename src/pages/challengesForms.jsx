@@ -114,10 +114,12 @@ const ListChallengeForm = () => {
 
   // Table columns
   const columns = [
+    { header: "User Id", accessor: "userId" },
     { header: "Name", accessor: "name" },
     { header: "Media-Type", accessor: "mediaType" },
     { header: "Media-Files", accessor: "mediaFiles" },
     { header: "Status", accessor: "isVerified" },
+    { header: "Date", accessor: "createdAt" },
   ];
 
   // Table actions
