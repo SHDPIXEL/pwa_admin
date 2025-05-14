@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Base URL for the API
 export const BASE_URL = "https://api.breboot.celagenex.com"; // Replace with your server's base URLadd
-export const BASE_URL = "http://192.168.1.16:4040";
+//export const BASE_URL = "http://192.168.1.16:4040";
 
 // Create an Axios instance
 const API = axios.create({
