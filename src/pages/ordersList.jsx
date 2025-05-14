@@ -15,6 +15,11 @@ const OrdersList = () => {
   const [selectedOrderId, setSelectedOrderId] = useState("");
   const [transactionId, setTransactionId] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [landmark, setLandmark] = useState("");
+  const [gstNumber, setGstNumber] = useState("");
   const [paymentScreenshot, setPaymentScreenshot] = useState("Admin");
 
   useEffect(() => {
@@ -69,7 +74,14 @@ const OrdersList = () => {
       const payload = {
         orderId: selectedOrderId,
         transactionId,
-        address,
+        address: JSON.stringify({
+          address,
+          city: "Vadodara",
+          state: "Gujarat",
+          pincode: "390019",
+          landMark: "no",
+          gstNumber: "wdci8c9d89scd",
+        }),
         paymentScreenshot,
       };
 
@@ -83,6 +95,11 @@ const OrdersList = () => {
       setSelectedOrderId("");
       setTransactionId("");
       setAddress("");
+      setCity("");
+      setState("");
+      setPincode("");
+      setLandmark("");
+      setGstNumber("");
       setPaymentScreenshot("");
       setModalOpen(false);
     } catch (error) {
@@ -134,7 +151,7 @@ const OrdersList = () => {
       {/* Modal: Show eligible orders in dropdown */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-white/10 backdrop-blur-sm z-50">
-          <div className="bg-white p-6 border border-orange-400/10 rounded-lg shadow-md w-[400px]">
+          <div className="bg-white p-6 border border-orange-400/10 rounded-lg shadow-md w-[500px]">
             <h2 className="text-xl text-orange-400/90 font-medium mb-6 text-center">
               Create Manual Payment
             </h2>
@@ -160,46 +177,117 @@ const OrdersList = () => {
               </select>
             </div>
 
-            {/* Transaction ID */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Transaction ID
-              </label>
-              <input
-                type="text"
-                placeholder="Enter transaction ID"
-                value={transactionId}
-                onChange={(e) => setTransactionId(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-gray-300"
-              />
+            {/* Row: Transaction ID + Street Address */}
+            <div className="flex gap-4 mb-4">
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1 text-gray-700">
+                  Transaction ID<span className="text-[14px] text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter transaction ID"
+                  value={transactionId}
+                  onChange={(e) => setTransactionId(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1 text-gray-700">
+                  Street Address<span className="text-[14px] text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300"
+                  placeholder="Street address"
+                />
+              </div>
             </div>
 
-            {/* Address */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Address
-              </label>
-              <textarea
-                placeholder="Enter address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 resize-none"
-              />
+            {/* Row: City + State */}
+            <div className="flex gap-4 mb-4">
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1 text-gray-700">
+                  City<span className="text-[14px] text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300"
+                  placeholder="City"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1 text-gray-700">
+                  State<span className="text-[14px] text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300"
+                  placeholder="State"
+                />
+              </div>
             </div>
 
-            {/* Payment Screenshot URL */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Payment Screenshot URL
-              </label>
-              <input
-                type="text"
-                placeholder="Paste screenshot URL"
-                value={paymentScreenshot}
-                onChange={(e) => setPaymentScreenshot(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 disabled:opacity-60"
-                disabled
-              />
+            {/* Row: Pincode + Landmark */}
+            <div className="flex gap-4 mb-4">
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1 text-gray-700">
+                  Pincode<span className="text-[14px] text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300"
+                  placeholder="Pincode"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1 text-gray-700">
+                  Landmark<span className="text-[14px] text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={landmark}
+                  onChange={(e) => setLandmark(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300"
+                  placeholder="Landmark"
+                />
+              </div>
+            </div>
+
+            {/* Row: GST Number + Screenshot */}
+            <div className="flex gap-4 mb-4">
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1 text-gray-700">
+                  GST Number<span className="text-[10px] text-gray-500 italic">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={gstNumber}
+                  onChange={(e) => setGstNumber(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300"
+                  placeholder="GST Number"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1 text-gray-700">
+                  Payment Screenshot URL
+                </label>
+                <input
+                  type="text"
+                  placeholder="Paste screenshot URL"
+                  value={paymentScreenshot}
+                  onChange={(e) => setPaymentScreenshot(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border bg-black/20 border-gray-300 disabled:opacity-50"
+                  disabled
+                />
+              </div>
             </div>
 
             {/* Buttons */}
