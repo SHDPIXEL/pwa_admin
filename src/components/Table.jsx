@@ -22,7 +22,7 @@ const Table = ({
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); 
   const [expandedRows, setExpandedRows] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const itemsPerPage = 10;
@@ -93,7 +93,7 @@ const Table = ({
         <input
           type="text"
           placeholder="Search..."
-          className="p-2 border rounded-md w-1/3"
+          className="p-2 border border-gray-400 rounded-md w-1/3"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

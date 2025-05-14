@@ -10,6 +10,7 @@ import { BASE_URL } from "../lib/utils";
 const DoctorsList = () => {
   const navigate = useNavigate();
   const [payments, setPayments] = useState([]);
+  const [filter, setFilter] = useState("All"); // Default filter set to "All"
 
   useEffect(() => {
     const fetchChallengeForms = async () => {
@@ -77,6 +78,16 @@ const DoctorsList = () => {
 
     fetchChallengeForms();
   }, []);
+
+  const filteredPayments = payments.filter((payment) => {
+    if (filter === "User") {
+      return payment.paymentScreenshot && payment.paymentScreenshot !== "Admin";
+    }
+    if (filter === "Admin") {
+      return payment.paymentScreenshot === "Admin";
+    }
+    return true; // "All" shows everything
+  });
 
   // Function to download invoice
   const handleDownloadInvoice = (invoiceUrl) => {
@@ -157,7 +168,11 @@ const DoctorsList = () => {
       handler: (row) => updatePaymentStatus(row.id, "Rejected"),
     },
   ];
-  
+
+  // Function to handle filter change
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
 
   return (
     <div className="p-6">
@@ -169,10 +184,22 @@ const DoctorsList = () => {
       <h1 className="text-2xl font-bold mb-4 text-gray-800">
         Payment Invoice List
       </h1>
-      {payments.length > 0 ? (
+      {/* Filter dropdown */}
+      <div className="mb-4">
+        <select
+          className="p-2 border border-gray-300 rounded"
+          value={filter}
+          onChange={handleFilterChange}
+        >
+          <option value="All">All</option>
+          <option value="User">User</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+      {filteredPayments.length > 0 ? (
         <Table
           columns={columns}
-          data={payments}
+          data={filteredPayments}
           globalActions={actions}
           handleDownloadInvoice={handleDownloadInvoice}
         />
