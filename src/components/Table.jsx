@@ -1,6 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import { BASE_URL } from "../lib/utils";
-import { Download, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ArrowUpDown } from "lucide-react";
+import {
+  Download,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  ArrowUpDown,
+} from "lucide-react";
 
 const validAccessors = ["images", "image", "product_image"];
 
@@ -10,7 +18,9 @@ const Table = ({
   globalActions,
   toggleInStock,
   handleDownloadInvoice,
+  handleCreatePaymentManually,
 }) => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedRows, setExpandedRows] = useState([]);
@@ -26,16 +36,20 @@ const Table = ({
       const valueB = b[sortConfig.key];
 
       // Handle different data types
-      if (typeof valueA === 'string' && typeof valueB === 'string') {
-        return sortConfig.direction === 'asc'
+      if (typeof valueA === "string" && typeof valueB === "string") {
+        return sortConfig.direction === "asc"
           ? valueA.localeCompare(valueB)
           : valueB.localeCompare(valueA);
       }
-      
+
       // Handle numbers and other types
-      return sortConfig.direction === 'asc'
-        ? (valueA < valueB ? -1 : 1)
-        : (valueB < valueA ? -1 : 1);
+      return sortConfig.direction === "asc"
+        ? valueA < valueB
+          ? -1
+          : 1
+        : valueB < valueA
+        ? -1
+        : 1;
     });
   };
 
@@ -43,9 +57,9 @@ const Table = ({
     setSortConfig((prevConfig) => ({
       key,
       direction:
-        prevConfig.key === key && prevConfig.direction === 'asc'
-          ? 'desc'
-          : 'asc',
+        prevConfig.key === key && prevConfig.direction === "asc"
+          ? "desc"
+          : "asc",
     }));
   };
 
@@ -83,6 +97,15 @@ const Table = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        {/* Conditionally render the 'Create Payment Manually' button for the orders list */}
+        {window.location.pathname === "/ordersList" && (
+          <button
+            onClick={handleCreatePaymentManually}
+            className="px-4 py-2 bg-orange-400/90 text-white rounded-md hover:bg-orange-500/90"
+          >
+            Create Payment Manually
+          </button>
+        )}
       </div>
       <table className="min-w-full border-collapse border border-gray-200 bg-white shadow-sm rounded-lg md:text-sm text-xs">
         <thead>
@@ -99,9 +122,11 @@ const Table = ({
                 <div className="flex items-center justify-center gap-2">
                   {column.header}
                   {sortConfig.key === column.accessor ? (
-                    sortConfig.direction === 'asc' ? 
-                      <ChevronUp className="w-4 h-4" /> : 
+                    sortConfig.direction === "asc" ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
                       <ChevronDown className="w-4 h-4" />
+                    )
                   ) : (
                     <ArrowUpDown className="w-4 h-4 text-gray-400" />
                   )}
@@ -109,7 +134,9 @@ const Table = ({
               </th>
             ))}
             {globalActions && (
-              <th className="px-6 py-3 border-b text-center border-gray-200">Actions</th>
+              <th className="px-6 py-3 border-b text-center border-gray-200">
+                Actions
+              </th>
             )}
           </tr>
         </thead>
@@ -118,7 +145,9 @@ const Table = ({
             <React.Fragment key={rowIndex}>
               <tr
                 onClick={() => toggleRow(rowIndex)}
-                className={`hover:bg-gray-50 cursor-pointer ${rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+                className={`hover:bg-gray-50 cursor-pointer ${
+                  rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"
+                }`}
               >
                 {window.location.pathname === "/ordersList" && (
                   <td className="px-3 py-4 border-b text-center border-gray-200">
@@ -130,8 +159,16 @@ const Table = ({
                   </td>
                 )}
                 {columns.map((column, colIndex) => (
-                  <td key={colIndex} className="px-6 py-4 border-b text-center border-gray-200 text-gray-700">
-                    {renderCellContent(column, row, toggleInStock, handleDownloadInvoice)}
+                  <td
+                    key={colIndex}
+                    className="px-6 py-4 border-b text-center border-gray-200 text-gray-700"
+                  >
+                    {renderCellContent(
+                      column,
+                      row,
+                      toggleInStock,
+                      handleDownloadInvoice
+                    )}
                   </td>
                 ))}
                 {globalActions && (
@@ -147,8 +184,16 @@ const Table = ({
                               e.stopPropagation();
                               action.handler(row);
                             }}
-                            disabled={row.isVerified === 1 || row.isVerified === 2}
-                            className={`px-3 py-1 text-sm rounded-md ${action.className} ${row.isVerified === true || row.isVerified === 2 ? "opacity-0 cursor-not-allowed" : ""}`}
+                            disabled={
+                              row.isVerified === 1 || row.isVerified === 2
+                            }
+                            className={`px-3 py-1 text-sm rounded-md ${
+                              action.className
+                            } ${
+                              row.isVerified === true || row.isVerified === 2
+                                ? "opacity-0 cursor-not-allowed"
+                                : ""
+                            }`}
                           >
                             {action.label}
                           </button>
@@ -158,19 +203,34 @@ const Table = ({
                   </td>
                 )}
               </tr>
-              {expandedRows.includes(rowIndex) && window.location.pathname === "/ordersList" && (
-                <tr className="bg-gray-100">
-                  <td colSpan={columns.length + (globalActions ? 1 : 0) + (window.location.pathname === "/ordersList" ? 1 : 0)} className="p-4">
-                    <div className="text-gray-700">
-                      {/* <p><strong>Name:</strong> {row?.userName || "N/A"}</p> */}
-                      <p><strong>Phone:</strong> {row?.userPhone || "N/A"}</p>
-                      <p><strong>Email:</strong> {row?.userEmail || "N/A"}</p>
-                      {/* <p><strong>State:</strong> {row?.userState || "N/A"}</p> */}
-                      <p><strong>Delivery Address:</strong> {row.address || "N/A"}</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
+              {expandedRows.includes(rowIndex) &&
+                window.location.pathname === "/ordersList" && (
+                  <tr className="bg-gray-100">
+                    <td
+                      colSpan={
+                        columns.length +
+                        (globalActions ? 1 : 0) +
+                        (window.location.pathname === "/ordersList" ? 1 : 0)
+                      }
+                      className="p-4"
+                    >
+                      <div className="text-gray-700">
+                        {/* <p><strong>Name:</strong> {row?.userName || "N/A"}</p> */}
+                        <p>
+                          <strong>Phone:</strong> {row?.userPhone || "N/A"}
+                        </p>
+                        <p>
+                          <strong>Email:</strong> {row?.userEmail || "N/A"}
+                        </p>
+                        {/* <p><strong>State:</strong> {row?.userState || "N/A"}</p> */}
+                        <p>
+                          <strong>Delivery Address:</strong>{" "}
+                          {row.address || "N/A"}
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
             </React.Fragment>
           ))}
         </tbody>
@@ -187,7 +247,9 @@ const Table = ({
           Page {currentPage} of {totalPages} ({sortedData.length} records)
         </span>
         <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
           disabled={currentPage === totalPages}
           className="px-3 py-1 bg-gray-300 rounded-md disabled:opacity-50 flex items-center gap-1"
         >
@@ -283,7 +345,17 @@ const renderCellContent = (
       const cleanedValue =
         typeof value === "string" ? value.replace(/^"|"$/g, "").trim() : "";
       if (!cleanedValue) {
-        return <p className="text-gray-500">No proof available</p>;
+        return (
+          <p className="text-gray-500 italic text-sm">No proof available</p>
+        );
+      }
+
+      if (cleanedValue.toLowerCase() === "admin") {
+        return (
+          <p className="text-xs font-medium px-2 py-1 bg-orange-200/80 text-orange-500/80 rounded inline-block">
+            Admin
+          </p>
+        );
       }
       const imageUrl = `${BASE_URL}/${cleanedValue}`;
       return (
@@ -325,8 +397,8 @@ const renderCellContent = (
         typeof value === "string" && value.startsWith("[ W")
           ? JSON.parse(value)
           : Array.isArray(value)
-            ? value
-            : [value];
+          ? value
+          : [value];
       const sanitizedMediaArray = mediaArray.map((item) =>
         item.replace(/\\/g, "/").trim()
       );
@@ -423,4 +495,4 @@ const renderCellContent = (
   return typeof value === "function" ? value(row) : value;
 };
 
-export default Table; 
+export default Table;
